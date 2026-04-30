@@ -98,3 +98,38 @@ def update_materi(materi_id):
         return redirect(url_for("ss_bank_blueprint.bank_list"))
     # end try
 # end def
+
+# ──────────────────────────────────────────────────────────────────────────
+# Public API Endpoints (For Flutter App)
+# ──────────────────────────────────────────────────────────────────────────
+
+def _cors_response(data):
+    response = jsonify(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    return response
+
+@ss_bank_blueprint.route("/api/ss-bank/list", methods=["GET", "OPTIONS"])
+def api_bank_list():
+    if request.method == "OPTIONS":
+        return _cors_response({"ok": True})
+    
+    try:
+        data = ss_bank_proc.get_bank_list()
+        return _cors_response(data)
+    except Exception as e:
+        print(traceback.format_exc())
+        return _cors_response({"ok": False, "msg": str(e)})
+
+@ss_bank_blueprint.route("/api/ss-bank/lesson/<pelajaran_id>", methods=["GET", "OPTIONS"])
+def api_lesson_detail(pelajaran_id):
+    if request.method == "OPTIONS":
+        return _cors_response({"ok": True})
+    
+    try:
+        data = ss_bank_proc.get_pelajaran_detail(pelajaran_id)
+        return _cors_response(data)
+    except Exception as e:
+        print(traceback.format_exc())
+        return _cors_response({"ok": False, "msg": str(e)})
