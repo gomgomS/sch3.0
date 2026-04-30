@@ -1,0 +1,140 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "scrapper" %}
+
+{% block title %}Sekolah Sabat — Scrapper{% endblock %}
+{% block page_title %}Scrapper — Sekolah Sabat{% endblock %}
+{% block breadcrumb %}SCH Admin / Scrapper / Sekolah Sabat{% endblock %}
+
+{% block content %}
+
+<!-- Back -->
+<a href="/admin/scrapper" style="display:inline-flex; align-items:center; gap:6px; color:#64748b; font-size:13px; text-decoration:none; margin-bottom:24px; transition:.2s;"
+   onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">
+    ← Kembali ke Scrapper
+</a>
+
+<!-- Form Card -->
+<div class="admin-panel" style="max-width:620px;">
+    <div class="admin-panel-header">
+        <span class="admin-panel-title">📖 Scrape Materi Sekolah Sabat</span>
+    </div>
+    <div style="padding:28px;">
+
+        {% if error %}
+        <div style="background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); border-radius:10px;
+                    padding:12px 16px; color:#fca5a5; font-size:13px; margin-bottom:20px;
+                    display:flex; align-items:center; gap:8px;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/admin/scrapper/sekolah-sabat" id="scrape-form">
+
+            <div style="margin-bottom:20px;">
+                <label style="display:block; color:#94a3b8; font-size:12px; font-weight:600;
+                              text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px;">
+                    Tanggal Sekolah Sabat
+                </label>
+                <input type="date" name="tanggal" id="tanggal"
+                       style="width:100%; padding:12px 16px; background:rgba(255,255,255,0.06);
+                              border:1px solid rgba(255,255,255,0.1); border-radius:12px;
+                              color:#e2e8f0; font-size:14px; outline:none;
+                              transition:border-color .2s;"
+                       onfocus="this.style.borderColor='#6366f1'"
+                       onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+                       required>
+            </div>
+
+            <div style="margin-bottom:24px;">
+                <label style="display:block; color:#94a3b8; font-size:12px; font-weight:600;
+                              text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px;">
+                    URL Halaman Sekolah Sabat
+                </label>
+                <input type="url" name="url" id="url"
+                       value="{{ prefill_url }}"
+                       placeholder="https://benadam.my.id/sekolah-sabat/triwulan-2-2026-pelajaran-5/1-mei-2026/"
+                       style="width:100%; padding:12px 16px; background:rgba(255,255,255,0.06);
+                              border:1px solid rgba(255,255,255,0.1); border-radius:12px;
+                              color:#e2e8f0; font-size:13px; outline:none; font-family:monospace;
+                              transition:border-color .2s;"
+                       onfocus="this.style.borderColor='#6366f1'"
+                       onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+                       required>
+                <div style="color:#475569; font-size:11px; margin-top:6px;">
+                    Contoh: https://benadam.my.id/sekolah-sabat/triwulan-2-2026-pelajaran-5/1-mei-2026/
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-primary" style="width:100%; justify-content:center; padding:13px;">
+                <span id="btn-text">🔍 Mulai Scrape</span>
+                <span id="btn-loading" style="display:none;">⏳ Sedang scraping...</span>
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<!-- Hint box -->
+<div style="max-width:620px; margin-top:16px; padding:16px 20px;
+            background:rgba(99,102,241,.08); border:1px solid rgba(99,102,241,.2);
+            border-radius:12px; color:#94a3b8; font-size:13px; line-height:1.6;">
+    <strong style="color:#a5b4fc;">💡 Tips:</strong><br>
+    URL mengikuti pola: <code style="color:#c7d2fe; background:rgba(255,255,255,.05); padding:2px 6px; border-radius:4px;">
+    https://benadam.my.id/sekolah-sabat/<strong>triwulan-X-YYYY-pelajaran-N</strong>/<strong>DD-bln-YYYY</strong>/</code><br><br>
+    Nama bulan dalam bahasa Indonesia: <em>januari, februari, maret, april, mei, juni, juli, agustus, september, oktober, november, desember</em>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("scrape-form").addEventListener("submit", function() {
+    document.getElementById("btn-text").style.display    = "none";
+    document.getElementById("btn-loading").style.display = "inline";
+    document.getElementById("submit-btn").disabled = true;
+});
+
+// Auto-fill date from URL slug
+const BULAN = {
+    januari:1, februari:2, maret:3, april:4, mei:5, juni:6,
+    juli:7, agustus:8, september:9, oktober:10, november:11, desember:12
+};
+
+function parseDateFromUrl(url) {
+    try {
+        // Get last non-empty path segment: e.g. "1-mei-2026"
+        const parts = url.replace(/\/$/, "").split("/");
+        const slug  = parts[parts.length - 1]; // "1-mei-2026"
+        const segs  = slug.split("-");          // ["1","mei","2026"]
+        if (segs.length !== 3) return null;
+
+        const day   = parseInt(segs[0]);
+        const month = BULAN[segs[1].toLowerCase()];
+        const year  = parseInt(segs[2]);
+
+        if (!day || !month || !year) return null;
+
+        // Format as YYYY-MM-DD for <input type="date">
+        const mm = String(month).padStart(2, "0");
+        const dd = String(day).padStart(2, "0");
+        return `${year}-${mm}-${dd}`;
+    } catch(e) {
+        return null;
+    }
+}
+
+const urlInput     = document.getElementById("url");
+const tanggalInput = document.getElementById("tanggal");
+
+urlInput.addEventListener("input", function() {
+    const date = parseDateFromUrl(this.value);
+    if (date) {
+        tanggalInput.value = date;
+    }
+});
+
+// Also run once on page load if prefill_url is set
+const initialDate = parseDateFromUrl(urlInput.value);
+if (initialDate) tanggalInput.value = initialDate;
+</script>
+{% endblock %}

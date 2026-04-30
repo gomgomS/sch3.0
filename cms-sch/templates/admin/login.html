@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — SCH Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        /* Animated orbs */
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35;
+            animation: float 8s ease-in-out infinite;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: -80px; right: -80px; animation-delay: -4s; }
+        .orb-3 { width: 200px; height: 200px; background: #06b6d4; top: 50%; left: 50%; animation-delay: -2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50%       { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Login card */
+        .login-card {
+            position: relative; z-index: 10;
+            width: 420px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,.5);
+        }
+
+        .login-logo {
+            text-align: center; margin-bottom: 32px;
+        }
+        .login-logo .icon-wrap {
+            width: 64px; height: 64px; border-radius: 18px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; margin: 0 auto 14px;
+            box-shadow: 0 8px 24px rgba(99,102,241,.4);
+        }
+        .login-logo h1 { color: #f1f5f9; font-size: 22px; font-weight: 800; }
+        .login-logo p  { color: #64748b; font-size: 13px; margin-top: 4px; }
+
+        label {
+            display: block; color: #94a3b8; font-size: 12px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: .8px;
+            margin-bottom: 8px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%; padding: 13px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: #e2e8f0;
+            font-size: 14px; outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #6366f1;
+            background: rgba(99,102,241,.1);
+        }
+        input::placeholder { color: #475569; }
+
+        .form-group { margin-bottom: 20px; }
+
+        .btn-login {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 700;
+            cursor: pointer; margin-top: 8px;
+            transition: all .2s;
+            box-shadow: 0 4px 20px rgba(99,102,241,.35);
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99,102,241,.5);
+        }
+        .btn-login:active { transform: translateY(0); }
+
+        .error-box {
+            background: rgba(239,68,68,.12);
+            border: 1px solid rgba(239,68,68,.3);
+            border-radius: 10px; padding: 12px 16px;
+            color: #fca5a5; font-size: 13px;
+            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .login-footer {
+            text-align: center; margin-top: 28px;
+            color: #334155; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="icon-wrap">⛪</div>
+            <h1>SCH Admin</h1>
+            <p>Slapur Church Hymnal — Panel Admin</p>
+        </div>
+
+        {% if error %}
+        <div class="error-box">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/admin/login">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Masukkan username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login">
+                Masuk ke Dashboard
+            </button>
+        </form>
+
+        <div class="login-footer">
+            &copy; 2025 Slapur Church Hymnal. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

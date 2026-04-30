@@ -1,0 +1,319 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "scrapper" %}
+
+{% block title %}Hasil Scrape — Sekolah Sabat{% endblock %}
+{% block page_title %}Hasil Scrape — Sekolah Sabat{% endblock %}
+{% block breadcrumb %}SCH Admin / Scrapper / Sekolah Sabat / Hasil{% endblock %}
+
+{% block extra_head %}
+<style>
+    .result-card {
+        background: rgba(15,23,42,.6);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    .result-card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .result-card-body { padding: 24px; }
+
+    /* Title block */
+    .lesson-title {
+        font-size: 22px; font-weight: 800; letter-spacing: .5px;
+        color: #e2e8f0; text-align: center; padding: 24px 28px;
+        background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(139,92,246,.1));
+        border-radius: 12px; margin-bottom: 20px;
+        border: 1px solid rgba(99,102,241,.2);
+    }
+
+    /* Content paragraph types */
+    .p-block { border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; line-height: 1.8; font-size: 14px; }
+
+    .p-bacaan {
+        background: rgba(6,182,212,.08);
+        border-left: 3px solid rgba(6,182,212,.6);
+        color: #94a3b8;
+    }
+    .p-bacaan .label {
+        display: inline-block; background: rgba(6,182,212,.15); color: #22d3ee;
+        font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+        margin-bottom: 6px; letter-spacing: .5px;
+    }
+
+    .p-ayat {
+        background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(139,92,246,.08));
+        border-left: 3px solid rgba(99,102,241,.6);
+        color: #c7d2fe;
+    }
+    .p-ayat .label {
+        display: inline-block; background: rgba(99,102,241,.2); color: #a5b4fc;
+        font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+        margin-bottom: 6px; letter-spacing: .5px;
+    }
+
+    .p-paragraph {
+        background: rgba(255,255,255,.03);
+        border-left: 3px solid rgba(255,255,255,.08);
+        color: #cbd5e1;
+    }
+
+    .p-question {
+        background: rgba(16,185,129,.07);
+        border-left: 3px solid rgba(16,185,129,.4);
+        color: #94a3b8; font-style: italic;
+    }
+    .p-question::before {
+        content: "❓ ";
+    }
+
+    .day-nav-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+        background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+        color: #94a3b8; text-decoration: none; transition: all .2s;
+    }
+    .day-nav-btn:hover {
+        background: rgba(99,102,241,.2);
+        border-color: rgba(99,102,241,.4); color: #c7d2fe;
+    }
+    .copy-btn {
+        background: rgba(99,102,241,.15); color: #a5b4fc;
+        border: 1px solid rgba(99,102,241,.25); border-radius: 8px;
+        padding: 6px 14px; font-size: 12px; font-weight: 600;
+        cursor: pointer; transition: all .2s;
+    }
+    .copy-btn:hover { background: rgba(99,102,241,.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Back -->
+<a href="/admin/scrapper/sekolah-sabat"
+   style="display:inline-flex; align-items:center; gap:6px; color:#64748b; font-size:13px;
+          text-decoration:none; margin-bottom:24px; transition:.2s;"
+   onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">
+    ← Scrape Halaman Lain
+</a>
+
+{% if not result.ok %}
+<div style="background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); border-radius:14px;
+            padding:32px; color:#fca5a5; font-size:14px; text-align:center;">
+    <div style="font-size:36px; margin-bottom:12px;">⚠️</div>
+    <div style="font-weight:700; margin-bottom:8px;">Gagal Scraping</div>
+    <div>{{ result.error }}</div>
+    <a href="/admin/scrapper/sekolah-sabat" class="btn-primary"
+       style="display:inline-flex; margin-top:20px; text-decoration:none;">Coba Lagi</a>
+</div>
+
+{% else %}
+
+<!-- Meta row -->
+<div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+    <div>
+        <div style="color:#e2e8f0; font-size:18px; font-weight:700;">{{ result.day_label }}</div>
+        <div style="color:#475569; font-size:12px; font-family:monospace; margin-top:4px;">{{ result.source_url }}</div>
+    </div>
+    {% if result.ppt_url %}
+    <a href="{{ result.ppt_url }}" target="_blank"
+       style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
+              background:rgba(234,88,12,.15); border:1px solid rgba(234,88,12,.3);
+              border-radius:10px; color:#fb923c; font-size:13px; font-weight:600;
+              text-decoration:none; transition:all .2s; flex-shrink:0;"
+       onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+        📥 Download PowerPoint
+    </a>
+    {% endif %}
+</div>
+
+<!-- Day navigation -->
+{% if result.day_nav %}
+<div class="result-card">
+    <div class="result-card-header">
+        <span style="color:#94a3b8; font-size:13px; font-weight:600;">📅 Navigasi Hari</span>
+    </div>
+    <div class="result-card-body" style="display:flex; flex-wrap:wrap; gap:8px; padding:18px 24px;">
+        {% for nav in result.day_nav %}
+        <a href="/admin/scrapper/sekolah-sabat?url={{ nav.url | urlencode }}" class="day-nav-btn">
+            {{ nav.label }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Main scraped content (editable) -->
+<div class="result-card">
+    <div class="result-card-header">
+        <span style="color:#94a3b8; font-size:13px; font-weight:600;">📖 Konten Pelajaran
+            <span style="color:#475569; font-size:11px; font-weight:400; margin-left:6px;">— klik teks untuk edit, × untuk hapus</span>
+        </span>
+        <button class="copy-btn" onclick="copyContent()">📋 Salin Semua</button>
+    </div>
+    <div class="result-card-body" id="content-area">
+
+        {% if result.title %}
+        <div class="lesson-title" id="lesson-title-display">{{ result.title }}</div>
+        {% endif %}
+
+        {% if result.content %}
+            {% for item in result.content %}
+            <div class="p-block-wrap" style="position:relative; margin-bottom:8px;">
+                <div class="p-block {{ 'p-bacaan' if item.type=='bacaan' else 'p-ayat' if item.type=='ayat_hafalan' else 'p-question' if item.type=='question' else 'p-paragraph' }}"
+                     contenteditable="true"
+                     data-type="{{ item.type }}"
+                     style="outline:none; padding-right:36px; min-height:20px;"
+                     >{% if item.type == 'bacaan' %}<div class="label">📚 Bacaan Pekan Ini</div><br>{% elif item.type == 'ayat_hafalan' %}<div class="label">✨ Ayat Hafalan</div><br>{% elif item.type == 'question' %}❓ {% endif %}{{ item.text }}</div>
+                <button onclick="removeBlock(this)"
+                        style="position:absolute; top:8px; right:8px; background:rgba(239,68,68,.2);
+                               border:1px solid rgba(239,68,68,.3); color:#fca5a5; border-radius:6px;
+                               padding:2px 7px; font-size:11px; cursor:pointer; line-height:1.4;">×</button>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div id="empty-msg" style="color:#475569; text-align:center; padding:24px;">
+            Tidak ada konten. Tambah manual atau coba scrape ulang.
+        </div>
+        {% endif %}
+
+        <!-- Add paragraph button -->
+        <button onclick="addBlock()" id="add-block-btn"
+                style="width:100%; margin-top:4px; padding:8px; border-radius:8px; cursor:pointer;
+                       background:rgba(255,255,255,.03); border:1px dashed rgba(255,255,255,.1);
+                       color:#475569; font-size:12px; transition:.2s;"
+                onmouseover="this.style.borderColor='rgba(99,102,241,.4)'; this.style.color='#a5b4fc';"
+                onmouseout="this.style.borderColor='rgba(255,255,255,.1)'; this.style.color='#475569';">
+            + Tambah Paragraf
+        </button>
+
+    </div>
+</div>
+
+{% endif %}
+
+
+<!-- ══ Save to Bank ══ -->
+
+{% if result is defined and result.ok %}
+<div class="result-card" style="border-color:rgba(99,102,241,.25);">
+    <div class="result-card-header">
+        <span style="color:#a5b4fc; font-size:13px; font-weight:600;">💾 Simpan ke Sekolah Sabat Bank</span>
+    </div>
+    <div class="result-card-body">
+        <form method="POST" action="/admin/ss-bank/save" id="save-bank-form" onsubmit="return serializeContent()">
+            <input type="hidden" name="title"        value="{{ result.title }}">
+            <input type="hidden" name="ppt_url"      value="{{ result.ppt_url }}">
+            <input type="hidden" name="source_url"   value="{{ result.source_url }}">
+            <input type="hidden" name="day_label"    value="{{ result.day_label }}">
+            <input type="hidden" name="year"         value="{{ result.url_meta.year }}">
+            <input type="hidden" name="triwulan"     value="{{ result.url_meta.triwulan }}">
+            <input type="hidden" name="pelajaran_no" value="{{ result.url_meta.pelajaran_no }}">
+            <input type="hidden" name="day_of_week"  value="{{ hari }}">
+            {# Filled by serializeContent() from editable blocks before submit #}
+            <textarea name="content_json" id="content_json_field" style="display:none;"></textarea>
+
+            <!-- Read-only info row -->
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; padding:14px 16px;
+                        background:rgba(255,255,255,.03); border-radius:10px;
+                        border:1px solid rgba(255,255,255,.06);">
+                {% set chips = [
+                    ("Tahun",        result.url_meta.year or "—"),
+                    ("Triwulan",     result.url_meta.triwulan or "—"),
+                    ("No. Pelajaran",result.url_meta.pelajaran_no or "—"),
+                    ("Hari",         hari or "—"),
+                ] %}
+                {% for label, val in chips %}
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:80px;">
+                    <span style="color:#475569; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.7px;">{{ label }}</span>
+                    <span style="color:#a5b4fc; font-size:15px; font-weight:700; padding:4px 14px;
+                                 background:rgba(99,102,241,.12); border-radius:8px;
+                                 border:1px solid rgba(99,102,241,.2);">{{ val }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- User only fills this -->
+            <div style="margin-bottom:14px;">
+                <label style="display:block; color:#94a3b8; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px;">Nama Pelajaran (Judul Minggu)</label>
+                <input type="text" name="pelajaran_name" value="{{ result.lesson_title }}" required
+                       placeholder="e.g. PERAN ALKITAB"
+                       style="width:100%; padding:9px 14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#e2e8f0; font-size:14px; outline:none;">
+                <div style="color:#475569; font-size:11px; margin-top:4px;">Auto-terisi dari judul scrape. Bisa diubah jika perlu.</div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px;">
+                💾 Simpan ke Bank
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function removeBlock(btn) {
+    btn.closest(".p-block-wrap").remove();
+}
+
+function addBlock() {
+    const area = document.getElementById("content-area");
+    const btn  = document.getElementById("add-block-btn");
+    const wrap = document.createElement("div");
+    wrap.className = "p-block-wrap";
+    wrap.style.cssText = "position:relative; margin-bottom:8px;";
+    wrap.innerHTML = `
+        <div class="p-block p-paragraph"
+             contenteditable="true"
+             data-type="paragraph"
+             style="outline:none; padding-right:36px; min-height:24px;"
+             ></div>
+        <button onclick="removeBlock(this)"
+                style="position:absolute; top:8px; right:8px; background:rgba(239,68,68,.2);
+                       border:1px solid rgba(239,68,68,.3); color:#fca5a5; border-radius:6px;
+                       padding:2px 7px; font-size:11px; cursor:pointer; line-height:1.4;">×</button>`;
+    area.insertBefore(wrap, btn);
+    wrap.querySelector("[contenteditable]").focus();
+}
+
+function serializeContent() {
+    const blocks = document.querySelectorAll("#content-area [data-type]");
+    const data   = [];
+    blocks.forEach(b => {
+        // Strip label divs and emoji prefixes before reading text
+        const clone = b.cloneNode(true);
+        clone.querySelectorAll(".label").forEach(l => l.remove());
+        let text = clone.innerText.replace(/^❓\s?/, "").trim();
+        if (text) data.push({ type: b.dataset.type, text: text });
+    });
+    if (data.length === 0) {
+        alert("Konten kosong, tambahkan materi terlebih dahulu.");
+        return false;
+    }
+    document.getElementById("content_json_field").value = JSON.stringify(data);
+    return true;
+}
+
+function copyContent() {
+    let text = "";
+    const title = document.getElementById("lesson-title-display");
+    if (title) text += title.innerText.trim() + "\n\n";
+    document.querySelectorAll("#content-area [data-type]").forEach(b => {
+        const clone = b.cloneNode(true);
+        clone.querySelectorAll(".label").forEach(l => l.remove());
+        const t = clone.innerText.replace(/^❓\s?/, "").trim();
+        if (t) text += t + "\n\n";
+    });
+    navigator.clipboard.writeText(text.trim()).then(() => {
+        const btn = document.querySelector(".copy-btn");
+        btn.textContent = "✅ Tersalin!";
+        setTimeout(() => btn.textContent = "📋 Salin Semua", 2000);
+    });
+}
+</script>
+{% endblock %}

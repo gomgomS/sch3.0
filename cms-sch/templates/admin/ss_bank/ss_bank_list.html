@@ -1,0 +1,114 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "ss_bank" %}
+
+{% block title %}Sekolah Sabat Bank{% endblock %}
+{% block page_title %}Sekolah Sabat Bank{% endblock %}
+{% block breadcrumb %}SCH Admin / SS Bank{% endblock %}
+
+{% block extra_head %}
+<style>
+    .triwulan-group {
+        margin-bottom: 32px;
+    }
+    .triwulan-header {
+        display: flex; align-items: center; justify-content: flex-end;
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        margin-bottom: 4px;
+    }
+    .triwulan-title {
+        color: #e2e8f0; font-size: 15px; font-weight: 700;
+        letter-spacing: .3px;
+    }
+    .pelajaran-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        transition: background .15s;
+    }
+    .pelajaran-row:hover { background: rgba(99,102,241,.06); }
+    .pelajaran-label {
+        color: #6366f1; font-size: 14px; font-style: italic; font-weight: 500;
+    }
+    .pelajaran-name {
+        color: #818cf8; font-weight: 700;
+    }
+    .day-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+    .day-badge {
+        font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+        background: rgba(16,185,129,.15); color: #34d399;
+        border: 1px solid rgba(16,185,129,.2);
+    }
+    .day-badge.empty {
+        background: rgba(255,255,255,.04); color: #334155;
+        border-color: rgba(255,255,255,.06);
+    }
+    .empty-state {
+        text-align: center; padding: 60px 20px;
+        color: #334155;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Flash message -->
+{% if flash == 'saved' %}
+<div style="background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.3); border-radius:10px;
+            padding:12px 18px; color:#34d399; font-size:13px; margin-bottom:20px;
+            display:flex; align-items:center; gap:8px;">
+    ✅ Materi berhasil disimpan ke bank!
+</div>
+{% endif %}
+{% if flash == 'error' %}
+<div style="background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); border-radius:10px;
+            padding:12px 18px; color:#fca5a5; font-size:13px; margin-bottom:20px;">
+    ⚠️ Gagal menyimpan materi. Cek kembali data.
+</div>
+{% endif %}
+
+{% if not data.groups %}
+<div class="admin-panel">
+    <div class="empty-state">
+        <div class="icon">📚</div>
+        <div style="color:#475569; font-size:15px; font-weight:600; margin-bottom:8px;">Bank masih kosong</div>
+        <div style="color:#334155; font-size:13px;">Gunakan Scrapper untuk scrape materi lalu simpan ke bank.</div>
+        <a href="/admin/scrapper/sekolah-sabat" class="btn-primary"
+           style="display:inline-flex; margin-top:20px; text-decoration:none;">
+            🔍 Mulai Scrape
+        </a>
+    </div>
+</div>
+
+{% else %}
+{% for group in data.groups %}
+<div class="admin-panel triwulan-group">
+    <div class="triwulan-header">
+        <span class="triwulan-title">📖 Sekolah Sabat, Triwulan {{ group.triwulan }} [{{ group.year }}]</span>
+    </div>
+
+    {% for pel in group.pelajaran_list %}
+    <a href="/admin/ss-bank/pelajaran/{{ pel._id }}" style="text-decoration:none; display:block;">
+        <div class="pelajaran-row">
+            <div>
+                <span class="pelajaran-label">Pelajaran {{ pel.pelajaran_no }}: </span>
+                <span class="pelajaran-name">{{ pel.pelajaran_name }}</span>
+            </div>
+            <div class="day-badges">
+                {% set saved_days = pel.get('saved_days', []) %}
+                {% for day in ["Sabtu","Minggu","Senin","Selasa","Rabu","Kamis","Jumat"] %}
+                <span class="day-badge {{ '' if day in saved_days else 'empty' }}">
+                    {{ day[:3] }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

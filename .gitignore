@@ -1,0 +1,111 @@
+# ══════════════════════════════════════════
+# OS / Misc
+# ══════════════════════════════════════════
+*.class
+*.log
+*.swp
+*.swo
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.atom/
+.buildlog/
+.history
+.svn/
+
+# ══════════════════════════════════════════
+# IDE — IntelliJ / Android Studio
+# ══════════════════════════════════════════
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# ══════════════════════════════════════════
+# IDE — VS Code
+# ══════════════════════════════════════════
+.vscode/
+
+# ══════════════════════════════════════════
+# Python / Flask — cms-sch
+# ══════════════════════════════════════════
+
+# Virtual environments
+cms-sch/venv/
+cms-sch/venv3810/
+cms-sch/.venv/
+cms-sch/env/
+
+# Byte-compiled / cache
+cms-sch/**/__pycache__/
+cms-sch/**/*.pyc
+cms-sch/**/*.pyo
+cms-sch/**/*.pyd
+
+# Secrets & config
+cms-sch/slapz102_settings/config.py
+cms-sch/.env
+cms-sch/.env.*
+
+# Logs
+cms-sch/logs/
+cms-sch/*.log
+
+# Distribution
+cms-sch/dist/
+cms-sch/*.egg-info/
+
+# Test / coverage
+cms-sch/.pytest_cache/
+cms-sch/.coverage
+cms-sch/htmlcov/
+
+# ══════════════════════════════════════════
+# Flutter / Dart — sch-2.0-build-2022-flutter
+# ══════════════════════════════════════════
+sch-2.0-build-2022-flutter/.dart_tool/
+sch-2.0-build-2022-flutter/.flutter-plugins
+sch-2.0-build-2022-flutter/.flutter-plugins-dependencies
+sch-2.0-build-2022-flutter/.packages
+sch-2.0-build-2022-flutter/.pub-cache/
+sch-2.0-build-2022-flutter/.pub/
+sch-2.0-build-2022-flutter/build/
+sch-2.0-build-2022-flutter/**/doc/api/
+sch-2.0-build-2022-flutter/**/ios/Flutter/.last_build_id
+
+# Generated Dart files
+sch-2.0-build-2022-flutter/**/*.g.dart
+sch-2.0-build-2022-flutter/**/*.freezed.dart
+sch-2.0-build-2022-flutter/**/*.mocks.dart
+
+# Symbolication / Obfuscation
+sch-2.0-build-2022-flutter/app.*.symbols
+sch-2.0-build-2022-flutter/app.*.map.json
+
+# Android build
+sch-2.0-build-2022-flutter/android/app/debug
+sch-2.0-build-2022-flutter/android/app/profile
+sch-2.0-build-2022-flutter/android/app/release
+sch-2.0-build-2022-flutter/android/.gradle/
+sch-2.0-build-2022-flutter/android/captures/
+sch-2.0-build-2022-flutter/android/local.properties
+
+# iOS
+sch-2.0-build-2022-flutter/ios/Pods/
+sch-2.0-build-2022-flutter/ios/.symlinks/
+sch-2.0-build-2022-flutter/ios/Flutter/Flutter.framework
+sch-2.0-build-2022-flutter/ios/Flutter/Flutter.podspec
+
+# ══════════════════════════════════════════
+# Keystore / Certificates (NEVER COMMIT)
+# ══════════════════════════════════════════
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+*.pfx
+key.properties

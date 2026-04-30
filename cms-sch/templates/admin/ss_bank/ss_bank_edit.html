@@ -1,0 +1,136 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "ss_bank" %}
+{% set m = data.materi %}
+
+{% block title %}Edit Materi — {{ m.day_of_week }} · {{ m.pelajaran_name }}{% endblock %}
+{% block page_title %}Edit Materi{% endblock %}
+{% block breadcrumb %}SCH Admin / SS Bank / Edit {{ m.day_of_week }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .p-block-wrap { position:relative; margin-bottom:8px; }
+    .p-block { border-radius:10px; padding:12px 40px 12px 16px; font-size:14px; line-height:1.8; outline:none; min-height:24px; }
+    .p-bacaan    { background:rgba(6,182,212,.08);  border-left:3px solid rgba(6,182,212,.5); color:#94a3b8; }
+    .p-ayat      { background:rgba(99,102,241,.1);  border-left:3px solid rgba(99,102,241,.6); color:#c7d2fe; }
+    .p-question  { background:rgba(16,185,129,.07); border-left:3px solid rgba(16,185,129,.4); color:#94a3b8; font-style:italic; }
+    .p-paragraph { background:rgba(255,255,255,.03);border-left:3px solid rgba(255,255,255,.08); color:#cbd5e1; }
+    .del-btn {
+        position:absolute; top:8px; right:8px;
+        background:rgba(239,68,68,.2); border:1px solid rgba(239,68,68,.3);
+        color:#fca5a5; border-radius:6px; padding:2px 8px;
+        font-size:11px; cursor:pointer; line-height:1.5;
+    }
+    .add-btn {
+        width:100%; margin-top:6px; padding:9px; border-radius:8px; cursor:pointer;
+        background:rgba(255,255,255,.03); border:1px dashed rgba(255,255,255,.12);
+        color:#475569; font-size:12px; transition:.2s;
+    }
+    .add-btn:hover { border-color:rgba(99,102,241,.4); color:#a5b4fc; }
+    .field-label {
+        display:block; color:#94a3b8; font-size:11px; font-weight:600;
+        text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;
+    }
+    .field-input {
+        width:100%; padding:10px 14px; background:rgba(255,255,255,.06);
+        border:1px solid rgba(255,255,255,.1); border-radius:10px;
+        color:#e2e8f0; font-size:14px; outline:none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if not data.ok or not m %}
+<div style="color:#fca5a5; padding:24px; text-align:center;">Materi tidak ditemukan.</div>
+{% else %}
+
+<!-- Back -->
+<a href="/admin/ss-bank/pelajaran/{{ m.fk_pelajaran_id }}"
+   style="display:inline-flex; align-items:center; gap:6px; color:#64748b; font-size:13px;
+          text-decoration:none; margin-bottom:20px; transition:.2s;"
+   onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">
+    ← Kembali ke Pelajaran
+</a>
+
+<!-- Info chips -->
+<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+    <span style="background:rgba(99,102,241,.15); color:#a5b4fc; font-size:12px; font-weight:700;
+                 padding:4px 14px; border-radius:20px; border:1px solid rgba(99,102,241,.25);">
+        {{ m.day_of_week }}
+    </span>
+    <span style="color:#475569; font-size:13px;">{{ m.day_label }}</span>
+    <span style="color:#334155; font-size:12px; font-family:monospace;">Triwulan {{ m.triwulan }} · Pelajaran {{ m.pelajaran_no }}</span>
+</div>
+
+<form method="POST" action="/admin/ss-bank/materi/{{ m._id }}/update"
+      id="edit-form" onsubmit="return serializeEdit()">
+    <textarea name="content_json" id="edit_content_json" style="display:none;"></textarea>
+    <input type="hidden" name="pelajaran_name" id="field_pelajaran_name" value="{{ m.pelajaran_name }}">
+    <input type="hidden" name="title"          value="{{ m.title }}">
+
+<div class="admin-panel" style="margin-bottom:16px; padding:20px 24px;">
+
+    <!-- Pelajaran name -->
+    <div style="margin-bottom:18px;">
+        <label class="field-label">Nama Pelajaran (Judul Minggu)</label>
+        <input type="text" class="field-input" id="vis_pelajaran_name"
+               value="{{ m.pelajaran_name }}"
+               oninput="document.getElementById('field_pelajaran_name').value=this.value">
+    </div>
+
+    <!-- Content blocks -->
+    <label class="field-label">Konten Materi
+        <span style="color:#334155; font-weight:400; text-transform:none; letter-spacing:0;"> — klik untuk edit, × untuk hapus</span>
+    </label>
+
+    <div id="edit-content-area">
+    {% for item in m.content %}
+    <div class="p-block-wrap">
+        <div class="p-block {{ 'p-bacaan' if item.type=='bacaan' else 'p-ayat' if item.type=='ayat_hafalan' else 'p-question' if item.type=='question' else 'p-paragraph' }}"
+             contenteditable="true"
+             data-type="{{ item.type }}">{{ item.text }}</div>
+        <button type="button" class="del-btn" onclick="this.closest('.p-block-wrap').remove()">×</button>
+    </div>
+    {% endfor %}
+    </div>
+
+    <button type="button" class="add-btn" onclick="addEditBlock()">+ Tambah Paragraf</button>
+
+</div>
+
+<!-- Save button -->
+<button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px;">
+    💾 Simpan Perubahan
+</button>
+
+</form>
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addEditBlock() {
+    const area = document.getElementById("edit-content-area");
+    const wrap = document.createElement("div");
+    wrap.className = "p-block-wrap";
+    wrap.innerHTML = `
+        <div class="p-block p-paragraph" contenteditable="true" data-type="paragraph"></div>
+        <button type="button" class="del-btn" onclick="this.closest('.p-block-wrap').remove()">×</button>`;
+    area.appendChild(wrap);
+    wrap.querySelector("[contenteditable]").focus();
+}
+
+function serializeEdit() {
+    const blocks = document.querySelectorAll("#edit-content-area [data-type]");
+    const data   = [];
+    blocks.forEach(b => {
+        const text = b.innerText.trim();
+        if (text) data.push({ type: b.dataset.type, text: text });
+    });
+    if (!data.length) { alert("Konten tidak boleh kosong."); return false; }
+    document.getElementById("edit_content_json").value = JSON.stringify(data);
+    return true;
+}
+</script>
+{% endblock %}

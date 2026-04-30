@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}{{ data.name }} - Solusi Properti Terpercaya{% endblock %}
+
+{% block content %}
+
+    <!-- Hero Slider Section -->
+    <div class="hero-slider">
+        <!-- SLIDE 1 -->
+        <div class="hero-slide active">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=2000"
+                alt="CitraLand The GreenLake">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-subtitle text-primary">EXCLUSIVE LIVING</div>
+                <div class="hero-title text-5xl md:text-7xl text-white">CitraLand The GreenLake</div>
+                <div class="hero-desc">Modern Luxury Villa di kawasan elit Jayapura Barat dengan fasilitas terlengkap.
+                </div>
+                <div class="hero-btn">
+                    <a href="{{ data.whatsapp_url }}" target="_blank"
+                        class="inline-block bg-primary hover:bg-primary-hover text-white text-lg font-semibold px-8 py-3 rounded-full shadow-xl transition-all duration-300">
+                        Lihat Properti
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="hero-slide">
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=2000"
+                alt="Type Ruko T 51">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-subtitle text-primary">PREMIUM COLLECTION</div>
+                <div class="hero-title text-5xl md:text-7xl text-white">Type Ruko T 51 / B 73</div>
+                <div class="hero-desc">Peluang investasi terbaik dan ruang usaha di lokasi yang sangat strategis.</div>
+                <div class="hero-btn">
+                    <a href="{{ data.whatsapp_url }}" target="_blank"
+                        class="inline-block border-2 border-primary text-white hover:bg-primary text-lg font-semibold px-8 py-3 rounded-full shadow-xl transition-all duration-300">
+                        Eksplorasi Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="hero-slide">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"
+                alt="Kawasan Eksklusif">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-subtitle text-primary">PRIVATE ESTATE</div>
+                <div class="hero-title text-5xl md:text-7xl text-white">Timeless Architecture</div>
+                <div class="hero-desc">Desain modern dengan tata ruang fungsional untuk kenyamanan keluarga.</div>
+                <div class="hero-btn">
+                    <a href="{{ data.whatsapp_url }}" target="_blank"
+                        class="inline-block bg-primary hover:bg-primary-hover text-white text-lg font-semibold px-8 py-3 rounded-full shadow-xl transition-all duration-300">
+                        Cari Tahu Lebih Lanjut
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-nav hero-prev">&#10094;</div>
+        <div class="hero-nav hero-next">&#10095;</div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-md font-bold text-primary uppercase tracking-wider mb-2">About Us</h2>
+            <h3 class="text-4xl font-bold text-dark mb-8">{{ data.name }}</h3>
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                {{ data.description }}
+            </p>
+            <a href="#properti" class="text-primary font-semibold hover:underline border-b-2 border-primary pb-1">Lihat
+                Properti Kami &rarr;</a>
+        </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section id="properti" class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold text-dark mb-4">Properti Pilihan</h2>
+                <p class="text-lg text-gray-500">Segera beli properti impian Anda bersama kami</p>
+            </div>
+
+            <!-- Properties Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {% for prop in data.properties %}
+                <div
+                    class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col transform hover:-translate-y-2">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="{{ prop.image }}" alt="{{ prop.title }}"
+                            class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        <div
+                            class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            Tersedia
+                        </div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h4 class="text-2xl font-bold text-dark mb-4">{{ prop.title }}</h4>
+
+                        <!-- Specs Grid -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="flex items-center text-gray-600">
+                                <span class="text-primary mr-2">🛏️</span> {{ prop.bedrooms }} Kamar
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <span class="text-primary mr-2">🚿</span> {{ prop.bathrooms }} Mandi
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <span class="text-primary mr-2">🚗</span> {{ prop.carport }} Carport
+                            </div>
+                            <div class="flex items-center text-gray-600 text-sm">
+                                <span class="text-primary mr-2">📏</span> {{ prop.lt }}m² LT / {{ prop.lb }}m² LB
+                            </div>
+                        </div>
+
+                        <div class="mt-auto">
+                            <div class="border-t border-gray-100 pt-4 mb-4">
+                                <span class="text-sm text-gray-500">Harga:</span>
+                                <div class="text-2xl font-bold text-primary">{{ prop.price }}</div>
+                                {% if prop.kpr != '-' %}
+                                <div class="text-sm text-gray-500 mt-1">KPR: <span
+                                        class="font-medium hover:text-primary transition">{{ prop.kpr }}</span></div>
+                                {% endif %}
+                            </div>
+
+                            <a href="{{ data.whatsapp_url }}"
+                                class="block w-full text-center border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 rounded-full transition duration-300">
+                                Info Lengkap
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

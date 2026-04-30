@@ -1,0 +1,230 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "ss_bank" %}
+
+{% block title %}{{ data.pelajaran.pelajaran_name }} — SS Bank{% endblock %}
+{% block page_title %}Detail Pelajaran{% endblock %}
+{% block breadcrumb %}SCH Admin / SS Bank / Pelajaran {{ data.pelajaran.pelajaran_no }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Day accordion card */
+    .day-card {
+        background: rgba(15,23,42,.5);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px; margin-bottom: 10px;
+        overflow: hidden; transition: border-color .2s;
+    }
+    .day-card.has-materi { border-color: rgba(99,102,241,.2); }
+    .day-card.has-materi:hover { border-color: rgba(99,102,241,.4); }
+
+    .day-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 20px; cursor: pointer; user-select: none;
+        transition: background .15s;
+    }
+    .day-card-header:hover { background: rgba(255,255,255,.02); }
+
+    .day-card-left { display: flex; align-items: center; gap: 12px; }
+
+    .day-tag {
+        background: rgba(99,102,241,.15); color: #a5b4fc;
+        font-size: 11px; font-weight: 700; padding: 4px 12px;
+        border-radius: 20px; border: 1px solid rgba(99,102,241,.25);
+        min-width: 58px; text-align: center; flex-shrink: 0;
+    }
+    .day-tag.empty { background: rgba(255,255,255,.04); color: #334155; border-color: rgba(255,255,255,.06); }
+
+    .day-title { color: #e2e8f0; font-size: 14px; font-weight: 600; }
+    .day-label { color: #475569; font-size: 11px; margin-top: 2px; }
+    .day-empty-label { color: #334155; font-size: 13px; font-style: italic; }
+
+    .day-card-right { display: flex; align-items: center; gap: 12px; }
+
+    .chevron {
+        color: #475569; font-size: 12px; transition: transform .25s;
+        display: flex; align-items: center;
+    }
+    .chevron.open { transform: rotate(180deg); }
+
+    /* Collapsible body */
+    .day-body {
+        display: none; padding: 0 20px 20px;
+        border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .day-body.open { display: block; }
+
+    /* Content blocks */
+    .p-block { border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.75; }
+    .p-bacaan    { background:rgba(6,182,212,.08);  border-left:3px solid rgba(6,182,212,.5); color:#94a3b8; }
+    .p-ayat      { background:rgba(99,102,241,.1);  border-left:3px solid rgba(99,102,241,.6); color:#c7d2fe; }
+    .p-question  { background:rgba(16,185,129,.07); border-left:3px solid rgba(16,185,129,.4); color:#94a3b8; font-style:italic; }
+    .p-paragraph { background:rgba(255,255,255,.03);border-left:3px solid rgba(255,255,255,.08); color:#cbd5e1; }
+
+    .empty-day {
+        text-align:center; padding:20px; color:#334155; font-size:13px;
+        border: 1px dashed rgba(255,255,255,.06); border-radius:10px; margin-top:14px;
+    }
+
+    .ppt-link {
+        display:inline-flex; align-items:center; gap:6px; padding:6px 14px;
+        background:rgba(234,88,12,.12); border:1px solid rgba(234,88,12,.25);
+        border-radius:8px; color:#fb923c; font-size:12px; font-weight:600;
+        text-decoration:none; transition:opacity .2s; margin-top:14px;
+    }
+    .ppt-link:hover { opacity:.8; }
+    .rescrape-link {
+        font-size:11px; color:#475569; text-decoration:none; transition:.2s;
+        padding:5px 10px; border-radius:6px; background:rgba(255,255,255,.03);
+    }
+    .rescrape-link:hover { color:#94a3b8; background:rgba(255,255,255,.06); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Back -->
+<a href="/admin/ss-bank" style="display:inline-flex; align-items:center; gap:6px; color:#64748b;
+   font-size:13px; text-decoration:none; margin-bottom:20px; transition:.2s;"
+   onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">
+    ← Kembali ke SS Bank
+</a>
+
+{% if not data.pelajaran %}
+<div style="color:#fca5a5; padding:24px; text-align:center;">Pelajaran tidak ditemukan.</div>
+{% else %}
+
+<!-- Pelajaran Header -->
+<div class="admin-panel" style="margin-bottom:20px; padding:20px 24px;">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div>
+            <div style="color:#6366f1; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">
+                Triwulan {{ data.pelajaran.triwulan }} &middot; {{ data.pelajaran.year }} &middot; Pelajaran {{ data.pelajaran.pelajaran_no }}
+            </div>
+            <div style="color:#e2e8f0; font-size:20px; font-weight:800; margin-bottom:10px;">{{ data.pelajaran.pelajaran_name }}</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                {% for day in ["Sabtu","Minggu","Senin","Selasa","Rabu","Kamis","Jumat"] %}
+                {% set has_day = data.materi_list | selectattr("day_of_week","equalto",day) | list %}
+                <span style="font-size:10px; font-weight:600; padding:2px 9px; border-radius:20px;
+                    {% if has_day %}background:rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.25);
+                    {% else %}background:rgba(255,255,255,.04); color:#334155; border:1px solid rgba(255,255,255,.06);{% endif %}">
+                    {{ day[:3] }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% if data.pelajaran.ppt_url %}
+        <a href="{{ data.pelajaran.ppt_url }}" target="_blank" class="ppt-link" style="margin-top:0;">
+            📥 PowerPoint
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Day accordion cards -->
+{% set day_order = ["Sabtu","Minggu","Senin","Selasa","Rabu","Kamis","Jumat"] %}
+{% for day in day_order %}
+{% set materi = data.materi_list | selectattr("day_of_week","equalto",day) | list %}
+
+<div class="day-card {% if materi %}has-materi{% endif %}" id="card-{{ day }}">
+
+    <!-- Clickable header -->
+    <div class="day-card-header" onclick="toggleDay('{{ day }}')" >
+        <div class="day-card-left">
+            <span class="day-tag {% if not materi %}empty{% endif %}">{{ day }}</span>
+            <div>
+                {% if materi %}
+                <div class="day-title">{{ materi[0].title or data.pelajaran.pelajaran_name }}</div>
+                <div class="day-label">{{ materi[0].day_label }}</div>
+                {% else %}
+                <div class="day-empty-label">Belum ada materi</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="day-card-right">
+            {% if materi %}
+            <a href="/admin/ss-bank/materi/{{ materi[0]._id }}/edit"
+               style="font-size:11px; font-weight:600; color:#a5b4fc; text-decoration:none;
+                      padding:4px 10px; border-radius:6px; background:rgba(99,102,241,.12);
+                      border:1px solid rgba(99,102,241,.25); transition:.2s;"
+               onmouseover="this.style.background='rgba(99,102,241,.25)'"
+               onmouseout="this.style.background='rgba(99,102,241,.12)'">
+                ✏️ Edit
+            </a>
+            <span style="background:rgba(16,185,129,.1); color:#34d399; font-size:10px; font-weight:600;
+                         padding:2px 8px; border-radius:20px; border:1px solid rgba(16,185,129,.2);">
+                ✓ Tersimpan
+            </span>
+            {% endif %}
+            <span class="chevron" id="chev-{{ day }}">▼</span>
+        </div>
+    </div>
+
+    <!-- Collapsible body -->
+    <div class="day-body" id="body-{{ day }}">
+
+        {% if materi %}
+
+        <!-- PPT for this day -->
+        {% if materi[0].ppt_url %}
+        <div style="padding-top:14px;">
+            <a href="{{ materi[0].ppt_url }}" target="_blank" class="ppt-link">
+                📥 Download PowerPoint
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Content blocks -->
+        <div style="margin-top:14px;">
+            {% for item in materi[0].content %}
+                {% if item.type == 'bacaan' %}
+                <div class="p-block p-bacaan">{{ item.text }}</div>
+                {% elif item.type == 'ayat_hafalan' %}
+                <div class="p-block p-ayat">{{ item.text }}</div>
+                {% elif item.type == 'question' %}
+                <div class="p-block p-question">❓ {{ item.text }}</div>
+                {% else %}
+                <div class="p-block p-paragraph">{{ item.text }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Re-scrape link -->
+        {% if materi[0].source_url %}
+        <div style="margin-top:14px; text-align:right;">
+            <a href="/admin/scrapper/sekolah-sabat?url={{ materi[0].source_url | urlencode }}"
+               class="rescrape-link">🔄 Re-scrape hari ini</a>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-day">
+            Belum ada materi.
+            <a href="/admin/scrapper/sekolah-sabat" style="color:#6366f1; margin-left:4px;">Scrape sekarang →</a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endfor %}
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleDay(day) {
+    const body  = document.getElementById("body-"  + day);
+    const chev  = document.getElementById("chev-"  + day);
+    const isOpen = body.classList.contains("open");
+    body.classList.toggle("open", !isOpen);
+    chev.classList.toggle("open", !isOpen);
+}
+
+// Auto-open first card that has content
+document.addEventListener("DOMContentLoaded", function() {
+    const firstSaved = document.querySelector(".day-card.has-materi .day-card-header");
+    if (firstSaved) firstSaved.click();
+});
+</script>
+{% endblock %}

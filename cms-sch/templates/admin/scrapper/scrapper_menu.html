@@ -1,0 +1,50 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "scrapper" %}
+
+{% block title %}Scrapper{% endblock %}
+{% block page_title %}Scrapper{% endblock %}
+{% block breadcrumb %}SCH Admin / Scrapper{% endblock %}
+
+{% block content %}
+
+<p style="color:#64748b; font-size:14px; margin-bottom:28px;">
+    Pilih sumber materi yang ingin di-scrape dan disimpan ke database.
+</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px;">
+
+    <!-- Sekolah Sabat -->
+    <a href="/admin/scrapper/sekolah-sabat" style="text-decoration:none;">
+        <div class="stat-card" style="cursor:pointer; transition:all .25s; border:1px solid rgba(99,102,241,.15);"
+             onmouseover="this.style.borderColor='rgba(99,102,241,.5)'; this.style.transform='translateY(-4px)'"
+             onmouseout="this.style.borderColor='rgba(99,102,241,.15)'; this.style.transform='translateY(0)'">
+            <div class="stat-icon" style="background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.2)); font-size:28px; width:56px; height:56px;">
+                📖
+            </div>
+            <div style="color:#e2e8f0; font-size:17px; font-weight:700; margin-bottom:6px;">Sekolah Sabat</div>
+            <div style="color:#64748b; font-size:13px; line-height:1.5;">
+                Scrape materi Sekolah Sabat Dewasa harian dari benadam.my.id. Dapatkan PPT dan isi pelajaran terstruktur.
+            </div>
+            <div style="margin-top:16px; display:flex; align-items:center; gap:6px; color:#6366f1; font-size:13px; font-weight:600;">
+                Mulai Scrape <span>→</span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Bacaan Misi (Coming Soon) -->
+    <div class="stat-card" style="opacity:.5; cursor:not-allowed; border:1px solid rgba(255,255,255,0.05);">
+        <div class="stat-icon" style="background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(217,119,6,.2)); font-size:28px; width:56px; height:56px;">
+            🌍
+        </div>
+        <div style="color:#e2e8f0; font-size:17px; font-weight:700; margin-bottom:6px;">
+            Bacaan Misi
+            <span style="background:rgba(245,158,11,.15); color:#fbbf24; font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; margin-left:8px;">Segera</span>
+        </div>
+        <div style="color:#64748b; font-size:13px; line-height:1.5;">
+            Scrape berita dan bacaan misi dari sumber resmi. Akan tersedia segera.
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

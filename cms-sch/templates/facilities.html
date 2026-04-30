@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{ data.name }} - Fasilitas{% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="py-16 md:py-24 bg-dark bg-opacity-90 bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80&w=2000');">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Fasilitas</h1>
+            <p class="text-primary text-lg font-medium tracking-widest uppercase">Gaya Hidup Modern Anda</p>
+        </div>
+    </div>
+
+    <!-- Facilities Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-primary font-bold uppercase tracking-wider">Fasilitas Premium</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-dark mt-2 mb-4">Nikmati Fasilitas Lengkap</h2>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto">The Enrich City menghadirkan berbagai fasilitas premium yang dirancang untuk meningkatkan kualitas hidup penghuni.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Facility 1 -->
+                <div class="bg-light rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
+                    <img src="../../static/assets/images/Facility_Swimming Pool.webp" alt="Swimming Pool" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=1000'">
+                    <div class="p-8">
+                        <h4 class="text-2xl font-bold text-dark mb-3">Swimming Pool Resort-Style</h4>
+                        <p class="text-gray-600">Kolam renang dengan desain resort yang mewah dan nyaman. Dilengkapi area berjemur luas, taman tropis asri, dan sistem filtrasi modern.</p>
+                    </div>
+                </div>
+                <!-- Facility 2 -->
+                <div class="bg-light rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
+                    <img src="../../static/assets/images/Image_Facilities_Club_House.png" alt="Club House" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=1000'">
+                    <div class="p-8">
+                        <h4 class="text-2xl font-bold text-dark mb-3">Club House Eksklusif</h4>
+                        <p class="text-gray-600">Pusat aktivitas sosial dengan ruang meeting, gym modern, restoran, dan area karaoke untuk rekreasi penghuni.</p>
+                    </div>
+                </div>
+                <!-- Facility 3 -->
+                <div class="bg-light rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition duration-300">
+                    <img src="../../static/assets/images/Image_Facilities_Huse_tennis.png" alt="Tennis Court" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1589882827103-125021575003?auto=format&fit=crop&q=80&w=1000'">
+                    <div class="p-8">
+                        <h4 class="text-2xl font-bold text-dark mb-3">Tennis Court Profesional</h4>
+                        <p class="text-gray-600">Lapangan tenis standar internasional dengan sistem pencahayaan LED modern untuk bermain di malam hari.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-light text-center border-t border-gray-200">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-dark mb-6">Temukan Hunian Impian Anda</h2>
+            <p class="text-gray-500 mb-8 text-lg">The Enrich City mempersembahkan kawasan hunian premium dengan fasilitas lengkap untuk gaya hidup modern.</p>
+            <a href="{{ data.whatsapp_url }}" class="inline-block bg-primary hover:bg-primary-hover text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg transition duration-300" target="_blank">
+                Hubungi Marketing Sekarang
+            </a>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}{{ data.name }} - About Us{% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="py-16 md:py-24 bg-dark bg-opacity-90 bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000');">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">About Us</h1>
+            <p class="text-primary text-lg font-medium tracking-widest uppercase">Mengenal Lebih Dekat</p>
+        </div>
+    </div>
+
+    <!-- Company Profile -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-dark text-center mb-16">PT. PIJINDO</h2>
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2 text-lg text-gray-700 space-y-6">
+                    <p><span class="font-bold text-dark">PT Pijindo</span> adalah perusahaan pengembang properti yang berfokus pada pembangunan kawasan hunian modern & berkelanjutan di wilayah Papua. Melalui proyek unggulan The Enrich City, PT. Pijindo menghadirkan hunian yang mengutamakan kenyamanan, kualitas hidup, serta harmoni dengan alam.</p>
+                    <p>Dengan menggabungkan keahlian teknis, pemilihan material terbaik, serta manajemen proyek yang profesional, kami hadir sebagai mitra yang dapat diandalkan dalam setiap tahap pembangunan, mulai dari perencanaan, pengadaan material, hingga realisasi konstruksi. Kami percaya bahwa integritas, kualitas, dan ketepatan eksekusi adalah fondasi utama dalam menciptakan hasil kerja yang memuaskan dan berkelanjutan.</p>
+                    <p>PT Pijindo terus berkembang dengan membawa semangat inovasi dan solusi konstruktif bagi berbagai kebutuhan pembangunan di Indonesia.</p>
+                </div>
+                <div class="lg:w-1/2 text-center">
+                    <img src="../../static/assets/images/logo_pijindo_blue.webp" alt="PT Pijindo Logo" class="mx-auto w-64 md:w-80" onerror="this.src='https://via.placeholder.com/300x150.png?text=PT.+PIJINDO'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Highlight -->
+    <section class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-dark mb-12 text-center md:text-left">THE ENRICH CITY</h2>
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <img src="../../static/assets/images/gate_depan_tampak_depan.webp" alt="Enrich City Cluster" class="rounded-2xl shadow-xl w-full" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000'">
+                </div>
+                <div class="lg:w-1/2 text-lg text-gray-700 leading-relaxed">
+                    <p>Proyek unggulan kami adalah <span class="font-bold text-dark">The Enrich City</span>, kawasan perumahan modern yang dikembangkan di Provinsi Papua Tengah. Proyek ini menggabungkan konsep ruang terbuka hijau, kenyamanan, dan aksesibilitas dalam satu lingkungan terpadu, menjadikannya pilihan ideal bagi keluarga muda dan masyarakat urban yang mendambakan hunian berkualitas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-white text-center border-t border-gray-100">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-dark mb-6">Temukan Segera Rumah Impian Anda</h2>
+            <p class="text-gray-500 mb-8 text-lg">Hubungi kami untuk informasi lebih lanjut mengenai ketersediaan unit dan promo menarik bulan ini.</p>
+            <a href="{{ data.whatsapp_url }}" class="inline-block bg-primary hover:bg-primary-hover text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg transition duration-300" target="_blank">
+                Hubungi Marketing Sekarang
+            </a>
+        </div>
+    </section>
+{% endblock %}

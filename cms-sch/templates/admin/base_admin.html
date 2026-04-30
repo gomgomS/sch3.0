@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SCH Admin{% endblock %} — Slapur Church Hymnal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='v2/perumahan.output.css') }}">
+    <style>
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+        /* ── Sidebar ── */
+        .admin-sidebar {
+            width: 260px; min-height: 100vh; position: fixed; left: 0; top: 0; z-index: 50;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            border-right: 1px solid rgba(255,255,255,0.07);
+            display: flex; flex-direction: column;
+        }
+        .admin-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .admin-logo .logo-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; margin-bottom: 10px;
+        }
+        .admin-logo .logo-title { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
+        .admin-logo .logo-sub   { color: #94a3b8; font-size: 11px; margin-top: 2px; letter-spacing: .5px; }
+
+        .admin-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-label {
+            color: #475569; font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+            text-transform: uppercase; padding: 4px 12px 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            border-radius: 10px; color: #94a3b8; font-size: 14px; font-weight: 500;
+            text-decoration: none; transition: all .2s; margin-bottom: 2px; cursor: pointer;
+        }
+        .nav-item:hover  { background: rgba(99,102,241,.15); color: #c7d2fe; }
+        .nav-item.active { background: linear-gradient(135deg, rgba(99,102,241,.35), rgba(139,92,246,.25)); color: #a5b4fc; border: 1px solid rgba(99,102,241,.3); }
+        .nav-item .nav-icon { width: 20px; text-align: center; font-size: 16px; }
+
+        .admin-footer {
+            padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.07);
+        }
+        .admin-user-card {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 10px; background: rgba(255,255,255,0.05);
+        }
+        .admin-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0;
+        }
+        .admin-user-name { color: #e2e8f0; font-size: 13px; font-weight: 600; }
+        .admin-user-role { color: #64748b; font-size: 11px; }
+
+        /* ── Main content ── */
+        .admin-main {
+            margin-left: 260px; min-height: 100vh;
+            background: #0f172a;
+        }
+        .admin-topbar {
+            height: 64px; padding: 0 28px;
+            background: rgba(15,23,42,.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 40;
+        }
+        .admin-topbar .page-title { color: #e2e8f0; font-size: 18px; font-weight: 600; }
+        .admin-topbar .breadcrumb { color: #475569; font-size: 12px; margin-top: 2px; }
+
+        .admin-content { padding: 28px; }
+
+        /* ── Cards ── */
+        .stat-card {
+            border-radius: 16px; padding: 24px;
+            background: linear-gradient(135deg, rgba(30,27,75,.8), rgba(15,23,42,.9));
+            border: 1px solid rgba(255,255,255,0.07);
+            backdrop-filter: blur(10px);
+        }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; margin-bottom: 16px;
+        }
+        .stat-value { color: #f1f5f9; font-size: 32px; font-weight: 800; line-height: 1; }
+        .stat-label { color: #64748b; font-size: 13px; font-weight: 500; margin-top: 4px; }
+        .stat-change { font-size: 12px; margin-top: 8px; }
+
+        /* ── Table ── */
+        .admin-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .admin-table th {
+            background: rgba(15,23,42,.6); color: #475569;
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            padding: 12px 16px; text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .admin-table td {
+            padding: 14px 16px; color: #94a3b8; font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .admin-table tr:hover td { background: rgba(99,102,241,.05); }
+        .admin-table td .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        }
+        .badge-success { background: rgba(16,185,129,.15); color: #34d399; }
+
+        /* ── Panel ── */
+        .admin-panel {
+            background: rgba(15,23,42,.6);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden;
+        }
+        .admin-panel-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .admin-panel-title { color: #e2e8f0; font-size: 15px; font-weight: 600; }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; border: none; border-radius: 10px;
+            padding: 10px 20px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all .2s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(99,102,241,.4); }
+
+        .btn-danger {
+            background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.25);
+            border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500;
+            cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            transition: all .2s;
+        }
+        .btn-danger:hover { background: rgba(239,68,68,.25); color: #fca5a5; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body style="background:#0f172a; margin:0;">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-logo">
+            <div class="logo-icon">⛪</div>
+            <div class="logo-title">SCH Admin</div>
+            <div class="logo-sub">Slapur Church Hymnal</div>
+        </div>
+
+        <nav class="admin-nav">
+            <div class="nav-section-label">Main</div>
+            <a href="/admin/dashboard" class="nav-item {% if active_menu == 'dashboard' %}active{% endif %}">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+
+            <div class="nav-section-label" style="margin-top:16px;">Konten</div>
+            <a href="#" class="nav-item {% if active_menu == 'hymns' %}active{% endif %}">
+                <span class="nav-icon">🎵</span> Kelola Himne
+            </a>
+            <a href="#" class="nav-item {% if active_menu == 'users' %}active{% endif %}">
+                <span class="nav-icon">👥</span> Pengguna
+            </a>
+
+            <div class="nav-section-label" style="margin-top:16px;">Tools</div>
+            <a href="/admin/scrapper" class="nav-item {% if active_menu == 'scrapper' %}active{% endif %}">
+                <span class="nav-icon">🔍</span> Scrapper
+            </a>
+            <a href="/admin/ss-bank" class="nav-item {% if active_menu == 'ss_bank' %}active{% endif %}">
+                <span class="nav-icon">📚</span> SS Bank
+            </a>
+
+            <div class="nav-section-label" style="margin-top:16px;">Sistem</div>
+            <a href="#" class="nav-item {% if active_menu == 'settings' %}active{% endif %}">
+                <span class="nav-icon">⚙️</span> Pengaturan
+            </a>
+        </nav>
+
+        <div class="admin-footer">
+            <div class="admin-user-card">
+                <div class="admin-avatar">{{ session.get('admin_name', 'A')[0]|upper }}</div>
+                <div>
+                    <div class="admin-user-name">{{ session.get('admin_name', 'Admin') }}</div>
+                    <div class="admin-user-role">{{ session.get('admin_role', 'ADMIN') }}</div>
+                </div>
+            </div>
+            <a href="/admin/logout" class="btn-danger" style="width:100%; margin-top:10px; justify-content:center;">
+                🚪 Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <div>
+                <div class="page-title">{% block page_title %}Dashboard{% endblock %}</div>
+                <div class="breadcrumb">{% block breadcrumb %}SCH Admin / Dashboard{% endblock %}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="color:#475569; font-size:13px;">Selamat datang, {{ session.get('admin_name', 'Admin') }}</span>
+            </div>
+        </div>
+
+        <div class="admin-content">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
