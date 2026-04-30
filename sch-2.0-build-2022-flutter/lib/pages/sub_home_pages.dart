@@ -61,7 +61,7 @@ class _SubHomePagesState extends State<SubHomePages> {
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: 2,
+              itemCount: 3,
               itemBuilder: (context, index) {
                 return AnimatedBuilder(
                   animation: _pageController,
@@ -86,12 +86,19 @@ class _SubHomePagesState extends State<SubHomePages> {
                           desc: 'Song book of Sekolah Lanjutan Advent Purwodadi',
                           icon: Icons.auto_stories,
                         )
-                      : const CoverTile(
-                          titleBook: "Lagu Sion",
-                          routeBook: 2,
-                          desc: 'Official Adventist Song Book',
-                          icon: Icons.music_note,
-                        ),
+                      : index == 1
+                          ? const CoverTile(
+                              titleBook: "Lagu Sion",
+                              routeBook: 2,
+                              desc: 'Official Adventist Song Book',
+                              icon: Icons.music_note,
+                            )
+                          : const CoverTile(
+                              titleBook: "Sekolah Sabat",
+                              routeBook: 3,
+                              desc: 'Pelajaran Sekolah Sabat Dewasa',
+                              icon: Icons.menu_book,
+                            ),
                 );
               },
             ),

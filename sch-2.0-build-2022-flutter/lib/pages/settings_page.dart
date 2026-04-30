@@ -96,6 +96,25 @@ class SettingsPage extends StatelessWidget {
                         const Icon(Icons.format_size, size: 32),
                       ],
                     ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                      child: Divider(),
+                    ),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        "Bold Text",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: const Text("Make lyrics and lesson texts bold"),
+                      value: settings.isBoldText,
+                      onChanged: (bool value) {
+                        settings.setBoldText(value);
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -23,13 +23,11 @@ class GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    final backgroundColor = isDark 
-        ? Colors.white.withOpacity(0.05) 
-        : Colors.white.withOpacity(0.4);
+    // A dark, rich glass effect for the Emerald theme
+    final backgroundColor = Theme.of(context).colorScheme.surface.withOpacity(0.4);
         
-    final borderColor = isDark 
-        ? Colors.white.withOpacity(0.1) 
-        : Colors.white.withOpacity(0.5);
+    // Champagne Gold border with very low opacity to give a subtle shine
+    final borderColor = Theme.of(context).colorScheme.primary.withOpacity(0.15);
 
     Widget card = Container(
       width: width,

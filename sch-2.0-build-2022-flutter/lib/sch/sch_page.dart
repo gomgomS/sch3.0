@@ -31,12 +31,12 @@ class _SchPageState extends State<SchPage> {
           children: [
             // ── Collapsible header ──────────────────────────────
             SizedBox(
-              height: 180 + MediaQuery.of(context).padding.top,
+              height: 100 + MediaQuery.of(context).padding.top,
               child: CustomScrollView(
                 physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: 180.0,
+                    expandedHeight: 100.0,
                     floating: false,
                     pinned: true,
                     backgroundColor: Colors.transparent,
@@ -44,7 +44,7 @@ class _SchPageState extends State<SchPage> {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: FlexibleSpaceBar(
-                          titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                          titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
                           title: Text(
                             'Slapur Church Hymnal',
                             style: GoogleFonts.inter(

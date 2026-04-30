@@ -4,10 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsProvider with ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
   double _textScaleFactor = 1.0;
+  bool _isBoldText = false;
   bool _isInitialized = false;
 
   ThemeMode get themeMode => _themeMode;
   double get textScaleFactor => _textScaleFactor;
+  bool get isBoldText => _isBoldText;
   bool get isInitialized => _isInitialized;
 
   SettingsProvider() {
@@ -29,6 +31,9 @@ class SettingsProvider with ChangeNotifier {
 
     // Load Text Scale
     _textScaleFactor = prefs.getDouble('textScaleFactor') ?? 1.0;
+    
+    // Load Bold Setting
+    _isBoldText = prefs.getBool('isBoldText') ?? false;
     
     _isInitialized = true;
     notifyListeners();
@@ -56,5 +61,14 @@ class SettingsProvider with ChangeNotifier {
     
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('textScaleFactor', scale);
+  }
+
+  Future<void> setBoldText(bool isBold) async {
+    if (_isBoldText == isBold) return;
+    _isBoldText = isBold;
+    notifyListeners();
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isBoldText', isBold);
   }
 }

@@ -11,12 +11,18 @@ class MeshBackground extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // Background color
-    final bgColor = isDark ? const Color(0xFF0B0F19) : const Color(0xFFF3F4F6);
+    final bgColor = isDark ? const Color(0xFF013220) : const Color(0xFFF9FAFB);
     
-    // Orb colors
-    final primaryOrb = isDark ? const Color(0xFF4F46E5).withOpacity(0.4) : const Color(0xFF818CF8).withOpacity(0.5);
-    final secondaryOrb = isDark ? const Color(0xFF0D9488).withOpacity(0.3) : const Color(0xFF2DD4BF).withOpacity(0.5);
-    final tertiaryOrb = isDark ? const Color(0xFF7C3AED).withOpacity(0.3) : const Color(0xFFA78BFA).withOpacity(0.4);
+    // Orb colors (Gold variations for Dark Mode, subtle Emerald/Gold for Light Mode)
+    final primaryOrb = isDark 
+        ? const Color(0xFFD4AF37).withOpacity(0.15) 
+        : const Color(0xFF013220).withOpacity(0.1);
+    final secondaryOrb = isDark 
+        ? const Color(0xFFB8860B).withOpacity(0.2)
+        : const Color(0xFFD4AF37).withOpacity(0.15);
+    final tertiaryOrb = isDark 
+        ? const Color(0xFFF1E5AC).withOpacity(0.1)
+        : const Color(0xFFB8860B).withOpacity(0.1);
 
     return Scaffold(
       backgroundColor: bgColor,
