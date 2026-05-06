@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.slapur_church_hymnal">
+    package="com.tarogom.sch">
    <application
         android:label="slapur church hymnal"
         android:name="${applicationName}"

@@ -15,7 +15,8 @@ desktop.ini
 .buildlog/
 .history
 .svn/
-
+/apps ss
+/backup
 # ══════════════════════════════════════════
 # IDE — IntelliJ / Android Studio
 # ══════════════════════════════════════════
@@ -103,9 +104,9 @@ sch-2.0-build-2022-flutter/ios/Flutter/Flutter.podspec
 # Keystore / Certificates (NEVER COMMIT)
 # ══════════════════════════════════════════
 *.jks
-*.keystore
+# *.keystore
 *.p12
 *.pem
-*.key
+# *.key
 *.pfx
-key.properties
+# key.properties

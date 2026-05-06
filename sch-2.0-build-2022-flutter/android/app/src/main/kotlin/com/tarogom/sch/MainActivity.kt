@@ -1,4 +1,4 @@
-package com.slapur_church_hymnal
+package com.tarogom.sch
 
 import io.flutter.embedding.android.FlutterActivity
 

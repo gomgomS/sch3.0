@@ -12,7 +12,7 @@ class SsBankService {
       return 'http://127.0.0.1:5004/api';
     } else {
       // Assuming Android emulator for now. Change to your computer's IP for real device testing.
-      return 'http://10.0.2.2:5004/api';
+      return 'http://202.155.94.7:5003/api';
     }
   }
 
