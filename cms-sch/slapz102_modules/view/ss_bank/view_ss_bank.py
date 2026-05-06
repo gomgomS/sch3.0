@@ -26,3 +26,8 @@ def html_materi_edit(materi_id):
                            active_menu="ss_bank", data=data)
 # end def
 
+def html_materi_create():
+    return render_template("admin/ss_bank/ss_bank_create.html",
+                           active_menu="ss_bank")
+# end def
+

@@ -21,10 +21,6 @@ class _SsBankPageState extends State<SsBankPage> {
   void initState() {
     super.initState();
     _futureBankList = SsBankService.fetchBankList();
-    // Delay the silent sync by 3 seconds so the UI animation is perfectly smooth
-    Future.delayed(const Duration(seconds: 3), () {
-      SsBankService.syncAllData();
-    });
   }
 
   @override
@@ -45,6 +41,88 @@ class _SsBankPageState extends State<SsBankPage> {
                     floating: false,
                     pinned: true,
                     backgroundColor: Colors.transparent,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.info_outline),
+                        tooltip: 'Informasi Sinkronisasi',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              title: Text('Informasi Unduhan', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                              content: Text(
+                                'Aplikasi tidak lagi mengunduh data secara otomatis untuk menghemat kuota internet Anda.\n\n'
+                                'Gunakan tombol putar (refresh) untuk mengunduh pelajaran minggu ini saja.\n'
+                                'Gunakan tombol awan (download) untuk mengunduh seluruh histori pelajaran.',
+                                style: GoogleFonts.inter(),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Mengerti'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.sync),
+                        tooltip: 'Perbarui Minggu Ini',
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Mengunduh pelajaran minggu ini...', style: GoogleFonts.inter()),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                            ),
+                          );
+                          SsBankService.syncCurrentWeek().then((_) {
+                            if (mounted) {
+                              // Refresh the list to show any new week if there is one
+                              setState(() {
+                                _futureBankList = SsBankService.fetchBankList();
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Selesai mengunduh.', style: GoogleFonts.inter()),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.cloud_download),
+                        tooltip: 'Perbarui Semua Data',
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Mengunduh semua histori pelajaran...', style: GoogleFonts.inter()),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                            ),
+                          );
+                          SsBankService.syncAllData().then((_) {
+                            if (mounted) {
+                              setState(() {
+                                _futureBankList = SsBankService.fetchBankList();
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Selesai mengunduh.', style: GoogleFonts.inter()),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          });
+                        },
+                      ),
+                    ],
                     flexibleSpace: ClipRRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

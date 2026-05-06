@@ -88,4 +88,24 @@ class SsBankService {
       debugPrint("Background sync failed: $e");
     }
   }
+
+  static Future<void> syncCurrentWeek() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // First, keep the main bank list up to date
+      await fetchBankList();
+      
+      // Then, only fetch and cache the current week's details
+      final response = await http.get(Uri.parse('$baseUrl/ss-bank/current-lesson'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['ok'] == true && data['pelajaran'] != null) {
+          final pelajaranId = data['pelajaran']['_id'];
+          prefs.setString('ss_lesson_${pelajaranId}_cache', response.body);
+        }
+      }
+    } catch (e) {
+      debugPrint("Background sync current week failed: $e");
+    }
+  }
 }

@@ -1,0 +1,154 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "ss_bank" %}
+
+{% block title %}Tambah Data Manual — SS Bank{% endblock %}
+{% block page_title %}Tambah Data Manual{% endblock %}
+{% block breadcrumb %}SCH Admin / SS Bank / Tambah Data{% endblock %}
+
+{% block extra_head %}
+<style>
+    .p-block-wrap { position:relative; margin-bottom:8px; }
+    .p-block { border-radius:10px; padding:12px 40px 12px 16px; font-size:14px; line-height:1.8; outline:none; min-height:24px; }
+    .p-bacaan    { background:rgba(6,182,212,.08);  border-left:3px solid rgba(6,182,212,.5); color:#94a3b8; }
+    .p-ayat      { background:rgba(99,102,241,.1);  border-left:3px solid rgba(99,102,241,.6); color:#c7d2fe; }
+    .p-question  { background:rgba(16,185,129,.07); border-left:3px solid rgba(16,185,129,.4); color:#94a3b8; font-style:italic; }
+    .p-paragraph { background:rgba(255,255,255,.03);border-left:3px solid rgba(255,255,255,.08); color:#cbd5e1; }
+    .del-btn {
+        position:absolute; top:8px; right:8px;
+        background:rgba(239,68,68,.2); border:1px solid rgba(239,68,68,.3);
+        color:#fca5a5; border-radius:6px; padding:2px 8px;
+        font-size:11px; cursor:pointer; line-height:1.5;
+    }
+    .add-btn {
+        width:100%; margin-top:6px; padding:9px; border-radius:8px; cursor:pointer;
+        background:rgba(255,255,255,.03); border:1px dashed rgba(255,255,255,.12);
+        color:#475569; font-size:12px; transition:.2s;
+    }
+    .add-btn:hover { border-color:rgba(99,102,241,.4); color:#a5b4fc; }
+    .field-label {
+        display:block; color:#94a3b8; font-size:11px; font-weight:600;
+        text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;
+    }
+    .field-input {
+        width:100%; padding:10px 14px; background:rgba(255,255,255,.06);
+        border:1px solid rgba(255,255,255,.1); border-radius:10px;
+        color:#e2e8f0; font-size:14px; outline:none;
+    }
+    .block-types { display:flex; gap:8px; margin-top:6px; }
+    .type-btn { padding:4px 10px; border-radius:6px; border:1px solid transparent; font-size:11px; cursor:pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Back -->
+<a href="/admin/ss-bank"
+   style="display:inline-flex; align-items:center; gap:6px; color:#64748b; font-size:13px;
+          text-decoration:none; margin-bottom:20px; transition:.2s;"
+   onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">
+    ← Kembali ke Daftar Bank
+</a>
+
+<form method="POST" action="/admin/ss-bank/save" id="create-form" onsubmit="return serializeCreate()">
+    <textarea name="content_json" id="create_content_json" style="display:none;"></textarea>
+
+<div class="admin-panel" style="margin-bottom:16px; padding:20px 24px;">
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:18px;">
+        <div>
+            <label class="field-label">Tahun</label>
+            <input type="number" class="field-input" name="year" required placeholder="2024">
+        </div>
+        <div>
+            <label class="field-label">Triwulan (1-4)</label>
+            <input type="number" class="field-input" name="triwulan" required min="1" max="4" placeholder="1">
+        </div>
+        <div>
+            <label class="field-label">Pelajaran Ke</label>
+            <input type="number" class="field-input" name="pelajaran_no" required placeholder="1">
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+        <div>
+            <label class="field-label">Hari</label>
+            <select class="field-input" name="day_of_week" required>
+                <option value="Sabtu">Sabtu</option>
+                <option value="Minggu">Minggu</option>
+                <option value="Senin">Senin</option>
+                <option value="Selasa">Selasa</option>
+                <option value="Rabu">Rabu</option>
+                <option value="Kamis">Kamis</option>
+                <option value="Jumat">Jumat</option>
+            </select>
+        </div>
+        <div>
+            <label class="field-label">Tanggal (Label Hari)</label>
+            <input type="text" class="field-input" name="day_label" placeholder="Ex: 5 Oktober">
+        </div>
+    </div>
+
+    <div style="margin-bottom:18px;">
+        <label class="field-label">Nama Pelajaran (Judul Mingguan)</label>
+        <input type="text" class="field-input" name="pelajaran_name" required placeholder="Judul besar pelajaran minggu ini">
+    </div>
+
+    <div style="margin-bottom:18px;">
+        <label class="field-label">Judul Harian</label>
+        <input type="text" class="field-input" name="title" required placeholder="Judul spesifik untuk hari ini">
+    </div>
+
+    <!-- Content blocks -->
+    <label class="field-label" style="margin-top:24px;">Konten Materi</label>
+    
+    <div id="create-content-area"></div>
+    
+    <div class="block-types">
+        <button type="button" class="type-btn" style="background:rgba(255,255,255,.05); color:#cbd5e1" onclick="addCreateBlock('paragraph', 'p-paragraph')">+ Paragraf</button>
+        <button type="button" class="type-btn" style="background:rgba(99,102,241,.1); color:#a5b4fc" onclick="addCreateBlock('ayat_hafalan', 'p-ayat')">+ Ayat</button>
+        <button type="button" class="type-btn" style="background:rgba(6,182,212,.1); color:#67e8f9" onclick="addCreateBlock('bacaan', 'p-bacaan')">+ Bacaan</button>
+        <button type="button" class="type-btn" style="background:rgba(16,185,129,.1); color:#6ee7b7" onclick="addCreateBlock('question', 'p-question')">+ Pertanyaan</button>
+    </div>
+
+</div>
+
+<!-- Save button -->
+<button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:12px; margin-bottom:40px;">
+    💾 Simpan ke Bank
+</button>
+
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addCreateBlock(type, cssClass) {
+    const area = document.getElementById("create-content-area");
+    const wrap = document.createElement("div");
+    wrap.className = "p-block-wrap";
+    wrap.innerHTML = `
+        <div class="p-block ${cssClass}" contenteditable="true" data-type="${type}"></div>
+        <button type="button" class="del-btn" onclick="this.closest('.p-block-wrap').remove()">×</button>`;
+    area.appendChild(wrap);
+    wrap.querySelector("[contenteditable]").focus();
+}
+
+// Add an initial paragraph
+window.onload = function() {
+    addCreateBlock('paragraph', 'p-paragraph');
+};
+
+function serializeCreate() {
+    const blocks = document.querySelectorAll("#create-content-area [data-type]");
+    const data   = [];
+    blocks.forEach(b => {
+        const text = b.innerText.trim();
+        if (text) data.push({ type: b.dataset.type, text: text });
+    });
+    if (!data.length) { alert("Konten tidak boleh kosong."); return false; }
+    document.getElementById("create_content_json").value = JSON.stringify(data);
+    return true;
+}
+</script>
+{% endblock %}

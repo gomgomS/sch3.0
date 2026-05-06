@@ -67,6 +67,19 @@ def save_materi():
     # end try
 # end def
 
+@ss_bank_blueprint.route("/admin/ss-bank/materi/create", methods=["GET"])
+def create_materi():
+    try:
+        if not _is_logged_in():
+            return redirect(url_for("admin_blueprint.login_page"))
+        # end if
+        return view_ss_bank.html_materi_create()
+    except Exception:
+        print(traceback.format_exc())
+        return "An error occurred", 500
+    # end try
+# end def
+
 @ss_bank_blueprint.route("/admin/ss-bank/materi/<materi_id>/edit", methods=["GET"])
 def edit_materi(materi_id):
     try:
@@ -129,6 +142,18 @@ def api_lesson_detail(pelajaran_id):
     
     try:
         data = ss_bank_proc.get_pelajaran_detail(pelajaran_id)
+        return _cors_response(data)
+    except Exception as e:
+        print(traceback.format_exc())
+        return _cors_response({"ok": False, "msg": str(e)})
+
+@ss_bank_blueprint.route("/api/ss-bank/current-lesson", methods=["GET", "OPTIONS"])
+def api_current_lesson():
+    if request.method == "OPTIONS":
+        return _cors_response({"ok": True})
+    
+    try:
+        data = ss_bank_proc.get_latest_pelajaran_detail()
         return _cors_response(data)
     except Exception as e:
         print(traceback.format_exc())

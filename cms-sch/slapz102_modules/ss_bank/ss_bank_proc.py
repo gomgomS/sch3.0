@@ -246,3 +246,29 @@ def update_materi(materi_id, params):
         return { "ok": False, "fk_pelajaran_id": "" }
     # end try
 # end def
+
+def get_latest_pelajaran_detail():
+    """Return the newest single pelajaran with its 7-day materi list."""
+    try:
+        db = _get_db()
+
+        # Find the single newest pelajaran by sorting year, triwulan, and pelajaran_no
+        latest_pel = db["db_ss_pelajaran"].find_one(
+            { "is_deleted": { "$ne": True } },
+            sort=[("year", -1), ("triwulan", -1), ("pelajaran_no", -1)]
+        )
+
+        if not latest_pel:
+            return { "ok": False, "pelajaran": None, "materi_list": [] }
+        # end if
+        
+        pelajaran_id = str(latest_pel["_id"])
+        
+        # Reuse existing get_pelajaran_detail logic
+        return get_pelajaran_detail(pelajaran_id)
+
+    except Exception:
+        print(traceback.format_exc())
+        return { "ok": False, "pelajaran": None, "materi_list": [] }
+    # end try
+# end def
