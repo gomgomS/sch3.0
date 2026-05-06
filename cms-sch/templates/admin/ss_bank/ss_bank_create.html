@@ -57,15 +57,15 @@
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:18px;">
         <div>
             <label class="field-label">Tahun</label>
-            <input type="number" class="field-input" name="year" required placeholder="2024">
+            <input type="number" class="field-input" name="year" required placeholder="2024" value="{{ prefill.get('year', '') }}">
         </div>
         <div>
             <label class="field-label">Triwulan (1-4)</label>
-            <input type="number" class="field-input" name="triwulan" required min="1" max="4" placeholder="1">
+            <input type="number" class="field-input" name="triwulan" required min="1" max="4" placeholder="1" value="{{ prefill.get('triwulan', '') }}">
         </div>
         <div>
             <label class="field-label">Pelajaran Ke</label>
-            <input type="number" class="field-input" name="pelajaran_no" required placeholder="1">
+            <input type="number" class="field-input" name="pelajaran_no" required placeholder="1" value="{{ prefill.get('pelajaran_no', '') }}">
         </div>
     </div>
 
@@ -73,13 +73,13 @@
         <div>
             <label class="field-label">Hari</label>
             <select class="field-input" name="day_of_week" required>
-                <option value="Sabtu">Sabtu</option>
-                <option value="Minggu">Minggu</option>
-                <option value="Senin">Senin</option>
-                <option value="Selasa">Selasa</option>
-                <option value="Rabu">Rabu</option>
-                <option value="Kamis">Kamis</option>
-                <option value="Jumat">Jumat</option>
+                <option value="Sabtu" {% if prefill.get('day_of_week') == 'Sabtu' %}selected{% endif %}>Sabtu</option>
+                <option value="Minggu" {% if prefill.get('day_of_week') == 'Minggu' %}selected{% endif %}>Minggu</option>
+                <option value="Senin" {% if prefill.get('day_of_week') == 'Senin' %}selected{% endif %}>Senin</option>
+                <option value="Selasa" {% if prefill.get('day_of_week') == 'Selasa' %}selected{% endif %}>Selasa</option>
+                <option value="Rabu" {% if prefill.get('day_of_week') == 'Rabu' %}selected{% endif %}>Rabu</option>
+                <option value="Kamis" {% if prefill.get('day_of_week') == 'Kamis' %}selected{% endif %}>Kamis</option>
+                <option value="Jumat" {% if prefill.get('day_of_week') == 'Jumat' %}selected{% endif %}>Jumat</option>
             </select>
         </div>
         <div>
@@ -90,7 +90,7 @@
 
     <div style="margin-bottom:18px;">
         <label class="field-label">Nama Pelajaran (Judul Mingguan)</label>
-        <input type="text" class="field-input" name="pelajaran_name" required placeholder="Judul besar pelajaran minggu ini">
+        <input type="text" class="field-input" name="pelajaran_name" required placeholder="Judul besar pelajaran minggu ini" value="{{ prefill.get('pelajaran_name', '') }}">
     </div>
 
     <div style="margin-bottom:18px;">

@@ -21,8 +21,12 @@ G_UPLOAD_URL_PATH           = G_STATIC_URL_PATH + "/upload"
 mainDB                      = "sch_id"
 mainDB_string               = "mongodb://127.0.0.1:27017/"  + mainDB
 
+G_BASE_URL_PROD          = "http://202.155.94.7:5003/"
+
+
 # Local Storage
 G_BASE_S3_URL               = "http://0.0.0.0:49003"
+
 G_IMAGE_URL_DISPATCH        = G_BASE_S3_URL + "/v1/cfs/get-file?"
 
 

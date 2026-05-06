@@ -272,3 +272,113 @@ def get_latest_pelajaran_detail():
         return { "ok": False, "pelajaran": None, "materi_list": [] }
     # end try
 # end def
+
+# ──────────────────────────────────────────────
+# Production Sync
+# ──────────────────────────────────────────────
+
+def send_to_prod(pelajaran_id):
+    """Fetch lesson and push to production server via HTTP POST."""
+    import requests
+    try:
+        data = get_pelajaran_detail(pelajaran_id)
+        if not data["ok"] or not data["pelajaran"]:
+            return { "ok": False, "msg": "Pelajaran tidak ditemukan." }
+        
+        prod_url = config.G_BASE_URL_PROD.rstrip("/") + "/api/ss-bank/receive-sync"
+        payload = {
+            "secret": getattr(config, "SYNC_SECRET", "tarogom_sync_2024"),
+            "data": data
+        }
+        
+        resp = requests.post(prod_url, json=payload, timeout=15)
+        if resp.status_code == 200:
+            resp_data = resp.json()
+            if resp_data.get("ok"):
+                return { "ok": True, "msg": "Berhasil terkirim ke production." }
+            else:
+                return { "ok": False, "msg": resp_data.get("msg", "Production server menolak data.") }
+        else:
+            return { "ok": False, "msg": f"HTTP Error {resp.status_code} dari production." }
+    except Exception as e:
+        print(traceback.format_exc())
+        return { "ok": False, "msg": f"Gagal menghubungi production: {str(e)}" }
+# end def
+
+def receive_sync_data(payload):
+    """Receive data from sender and overwrite local database."""
+    try:
+        secret = payload.get("secret")
+        expected_secret = getattr(config, "SYNC_SECRET", "tarogom_sync_2024")
+        if secret != expected_secret:
+            return { "ok": False, "msg": "Invalid sync secret." }
+            
+        data = payload.get("data")
+        if not data or not data.get("pelajaran"):
+            return { "ok": False, "msg": "Data payload kosong." }
+            
+        pel = data["pelajaran"]
+        materi_list = data.get("materi_list", [])
+        
+        db = _get_db()
+        
+        # 1. Upsert Pelajaran
+        existing_pel = db["db_ss_pelajaran"].find_one({
+            "year": pel["year"],
+            "triwulan": pel["triwulan"],
+            "pelajaran_no": pel["pelajaran_no"],
+            "is_deleted": { "$ne": True }
+        })
+        
+        if existing_pel:
+            pelajaran_id = str(existing_pel["_id"])
+            db["db_ss_pelajaran"].update_one(
+                { "_id": existing_pel["_id"] },
+                { "$set": {
+                    "pelajaran_name": pel.get("pelajaran_name", ""),
+                    "ppt_url": pel.get("ppt_url", "")
+                }}
+            )
+        else:
+            pel_rec = database.get_record("db_ss_pelajaran")
+            pel_rec["year"] = pel["year"]
+            pel_rec["triwulan"] = pel["triwulan"]
+            pel_rec["pelajaran_no"] = pel["pelajaran_no"]
+            pel_rec["pelajaran_name"] = pel.get("pelajaran_name", "")
+            pel_rec["ppt_url"] = pel.get("ppt_url", "")
+            pel_rec["status"] = "ACTIVE"
+            db["db_ss_pelajaran"].insert_one(pel_rec)
+            pelajaran_id = str(pel_rec["_id"])
+            
+        # 2. Overwrite all materi for this pelajaran
+        db["db_ss_materi"].delete_many({
+            "fk_pelajaran_id": pelajaran_id
+        })
+        
+        if materi_list:
+            new_materi_docs = []
+            for m in materi_list:
+                mat_rec = database.get_record("db_ss_materi")
+                mat_rec["fk_pelajaran_id"] = pelajaran_id
+                mat_rec["year"] = m.get("year", pel["year"])
+                mat_rec["triwulan"] = m.get("triwulan", pel["triwulan"])
+                mat_rec["pelajaran_no"] = m.get("pelajaran_no", pel["pelajaran_no"])
+                mat_rec["pelajaran_name"] = m.get("pelajaran_name", pel.get("pelajaran_name", ""))
+                mat_rec["day_of_week"] = m.get("day_of_week", "")
+                mat_rec["day_label"] = m.get("day_label", "")
+                mat_rec["source_url"] = m.get("source_url", "")
+                mat_rec["title"] = m.get("title", "")
+                mat_rec["content"] = m.get("content", [])
+                mat_rec["ppt_url"] = m.get("ppt_url", "")
+                mat_rec["status"] = "ACTIVE"
+                new_materi_docs.append(mat_rec)
+            # end for
+            if new_materi_docs:
+                db["db_ss_materi"].insert_many(new_materi_docs)
+            
+        return { "ok": True, "msg": "Sync successful." }
+        
+    except Exception as e:
+        print(traceback.format_exc())
+        return { "ok": False, "msg": f"Server error on receive: {str(e)}" }
+# end def

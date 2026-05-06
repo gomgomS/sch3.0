@@ -31,6 +31,25 @@ def bank_list():
     # end try
 # end def
 
+@ss_bank_blueprint.route("/admin/ss-bank/pelajaran/<pelajaran_id>/send-prod", methods=["GET"])
+def send_prod(pelajaran_id):
+    try:
+        if not _is_logged_in():
+            return redirect(url_for("admin_blueprint.login_page"))
+        # end if
+        
+        result = ss_bank_proc.send_to_prod(pelajaran_id)
+        if result.get("ok"):
+            return redirect(url_for("ss_bank_blueprint.bank_list") + "?flash=prod_success")
+        else:
+            msg = result.get("msg", "Gagal")
+            return redirect(url_for("ss_bank_blueprint.bank_list") + f"?flash=prod_error&msg={msg}")
+            
+    except Exception:
+        print(traceback.format_exc())
+        return redirect(url_for("ss_bank_blueprint.bank_list") + "?flash=prod_error")
+# end def
+
 @ss_bank_blueprint.route("/admin/ss-bank/pelajaran/<pelajaran_id>", methods=["GET"])
 def pelajaran_detail(pelajaran_id):
     try:
@@ -73,7 +92,16 @@ def create_materi():
         if not _is_logged_in():
             return redirect(url_for("admin_blueprint.login_page"))
         # end if
-        return view_ss_bank.html_materi_create()
+        
+        prefill = {
+            "year": request.args.get("year", ""),
+            "triwulan": request.args.get("triwulan", ""),
+            "pelajaran_no": request.args.get("pelajaran_no", ""),
+            "pelajaran_name": request.args.get("pelajaran_name", ""),
+            "day_of_week": request.args.get("day_of_week", "")
+        }
+        
+        return view_ss_bank.html_materi_create(prefill=prefill)
     except Exception:
         print(traceback.format_exc())
         return "An error occurred", 500
@@ -155,6 +183,19 @@ def api_current_lesson():
     try:
         data = ss_bank_proc.get_latest_pelajaran_detail()
         return _cors_response(data)
+    except Exception as e:
+        print(traceback.format_exc())
+        return _cors_response({"ok": False, "msg": str(e)})
+
+@ss_bank_blueprint.route("/api/ss-bank/receive-sync", methods=["POST", "OPTIONS"])
+def api_receive_sync():
+    if request.method == "OPTIONS":
+        return _cors_response({"ok": True})
+        
+    try:
+        payload = request.json or {}
+        result = ss_bank_proc.receive_sync_data(payload)
+        return _cors_response(result)
     except Exception as e:
         print(traceback.format_exc())
         return _cors_response({"ok": False, "msg": str(e)})

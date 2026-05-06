@@ -199,7 +199,9 @@
         {% else %}
         <div class="empty-day">
             Belum ada materi.
-            <a href="/admin/scrapper/sekolah-sabat" style="color:#6366f1; margin-left:4px;">Scrape sekarang →</a>
+            <a href="/admin/scrapper/sekolah-sabat" style="color:#6366f1; margin-left:4px;">Scrape sekarang</a>
+            <span style="color:#cbd5e1; margin:0 6px;">|</span>
+            <a href="/admin/ss-bank/materi/create?year={{ data.pelajaran.year }}&triwulan={{ data.pelajaran.triwulan }}&pelajaran_no={{ data.pelajaran.pelajaran_no }}&pelajaran_name={{ data.pelajaran.pelajaran_name | urlencode }}&day_of_week={{ day }}" style="color:#10b981;">Tambah manual →</a>
         </div>
         {% endif %}
 
