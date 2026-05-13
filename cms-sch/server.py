@@ -31,6 +31,9 @@ app.register_blueprint(scrapper_blueprint)
 from ss_bank.ss_bank_blueprint import ss_bank_blueprint
 app.register_blueprint(ss_bank_blueprint)
 
+from rundown_event.rundown_event_blueprint import rundown_event_blueprint
+app.register_blueprint(rundown_event_blueprint)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5004, debug=True)
 # end if

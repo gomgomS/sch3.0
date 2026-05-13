@@ -61,7 +61,7 @@ class _SubHomePagesState extends State<SubHomePages> {
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: 3,
+              itemCount: 4,
               itemBuilder: (context, index) {
                 return AnimatedBuilder(
                   animation: _pageController,
@@ -93,17 +93,83 @@ class _SubHomePagesState extends State<SubHomePages> {
                               desc: 'Official Adventist Song Book',
                               icon: Icons.music_note,
                             )
-                          : const CoverTile(
-                              titleBook: "Sekolah Sabat",
-                              routeBook: 3,
-                              desc: 'Pelajaran Sekolah Sabat Dewasa',
-                              icon: Icons.menu_book,
-                            ),
+                          : index == 2
+                              ? const CoverTile(
+                                  titleBook: "Sekolah Sabat",
+                                  routeBook: 3,
+                                  desc: 'Pelajaran Sekolah Sabat Dewasa',
+                                  icon: Icons.menu_book,
+                                )
+                              : const CoverTile(
+                                  titleBook: "Rundown Event",
+                                  routeBook: 4,
+                                  desc: 'Jadwal Acara & Pengisi Sesi',
+                                  icon: Icons.event,
+                                ),
                 );
               },
             ),
           ),
-          const SizedBox(height: 50),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32.0, top: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    if (_pageController.hasClients && (_pageController.page ?? 0) > 0) {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(width: 16),
+                AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    int currentPage = 0;
+                    if (_pageController.hasClients && _pageController.position.haveDimensions) {
+                      currentPage = _pageController.page?.round() ?? 0;
+                    }
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(4, (index) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: currentPage == index ? 24 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: currentPage == index
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        );
+                      }),
+                    );
+                  },
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios, size: 20),
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    if (_pageController.hasClients && (_pageController.page ?? 0) < 3) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

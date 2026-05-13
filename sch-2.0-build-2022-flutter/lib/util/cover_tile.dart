@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:slapur_church_hymnal/sch/sch_page.dart';
 import 'package:slapur_church_hymnal/lagusion/lagusion_page.dart';
 import 'package:slapur_church_hymnal/ss_bank/ss_bank_page.dart';
+import 'package:slapur_church_hymnal/rundown_event/rundown_event_page.dart';
 
 class CoverTile extends StatefulWidget {
   final String titleBook;
@@ -47,6 +48,11 @@ class _CoverTileState extends State<CoverTile> {
                 context,
                 MaterialPageRoute(builder: (context) => const SsBankPage()),
               );
+            } else if (widget.routeBook == 4) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RundownEventPage()),
+              );
             }
           },
           child: Container(
@@ -61,7 +67,9 @@ class _CoverTileState extends State<CoverTile> {
                     ? [const Color(0xFF6366f1), const Color(0xFF4338ca)]
                     : widget.routeBook == 2
                         ? [const Color(0xFF14b8a6), const Color(0xFF0f766e)]
-                        : [const Color(0xFFa855f7), const Color(0xFF7e22ce)],
+                        : widget.routeBook == 3
+                            ? [const Color(0xFFa855f7), const Color(0xFF7e22ce)]
+                            : [const Color(0xFFf59e0b), const Color(0xFFd97706)],
               ),
               boxShadow: [
                 BoxShadow(
@@ -69,7 +77,9 @@ class _CoverTileState extends State<CoverTile> {
                           ? const Color(0xFF6366f1)
                           : widget.routeBook == 2
                               ? const Color(0xFF14b8a6)
-                              : const Color(0xFFa855f7))
+                              : widget.routeBook == 3
+                                  ? const Color(0xFFa855f7)
+                                  : const Color(0xFFf59e0b))
                       .withOpacity(0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 8),

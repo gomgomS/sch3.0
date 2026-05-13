@@ -1,0 +1,186 @@
+{% extends "admin/base_admin.html" %}
+{% set active_menu = "rundown_event" %}
+
+{% block title %}Buat Rundown Event{% endblock %}
+{% block page_title %}Buat Rundown Event{% endblock %}
+{% block breadcrumb %}SCH Admin / Rundown Event / Buat{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; color: #94a3b8; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .form-control {
+        width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(15,23,42,.6); color: #f1f5f9; font-size: 14px;
+        transition: all .2s; outline: none;
+    }
+    .form-control:focus { border-color: #6366f1; background: rgba(15,23,42,.8); }
+    .form-row { display: flex; gap: 20px; }
+    .form-row .form-group { flex: 1; }
+    
+    .session-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        position: relative;
+    }
+    .session-header {
+        display: flex; gap: 12px; align-items: center; margin-bottom: 16px;
+    }
+    
+    .rundown-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+    
+    .btn-remove {
+        background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3);
+        border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .btn-add-secondary {
+        background: rgba(99,102,241,.15); color: #818cf8; border: 1px solid rgba(99,102,241,.3);
+        border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-add-primary {
+        background: rgba(16,185,129,.15); color: #34d399; border: 1px solid rgba(16,185,129,.3);
+        border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-panel" style="max-width: 900px;">
+    <div class="admin-panel-header">
+        <h3 class="admin-panel-title">Detail Rundown Event</h3>
+    </div>
+    <div style="padding: 24px;">
+        <form action="/admin/rundown-event/save" method="POST" id="formRundown">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nama Event</label>
+                    <input type="text" name="event_name" class="form-control" placeholder="Contoh: Ibadah Raya" required>
+                </div>
+                <div class="form-group" style="max-width: 250px;">
+                    <label class="form-label">Tanggal Event</label>
+                    <input type="date" name="event_date" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status Publish</label>
+                <label style="display:flex; align-items:center; gap:10px; color:#cbd5e1; cursor:pointer;">
+                    <input type="checkbox" name="is_published" id="is_published" style="width:18px; height:18px; cursor:pointer;">
+                    <span>Langsung Publish ke Mobile App (Hati-hati: data yang dipublish langsung tampil di aplikasi)</span>
+                </label>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 30px 0;">
+
+            <div class="form-group">
+                <label class="form-label" style="font-size: 16px; color:#fff;">Sesi & Rundown Acara</label>
+                <p style="color:#64748b; font-size:12px; margin-top:-4px; margin-bottom:16px;">
+                    Buat sesi (misal: Sesi 1, Ibadah Pagi) lalu tambahkan daftar rundown (jam, role, nama orang) ke dalamnya.
+                </p>
+
+                <div id="sessions-container">
+                    <!-- Sessions will be injected here via JS -->
+                </div>
+
+                <button type="button" class="btn-add-primary" onclick="addSession()">➕ Tambah Sesi Baru</button>
+            </div>
+
+            <input type="hidden" name="sessions_json" id="sessions_json">
+
+            <div style="margin-top: 40px; display: flex; gap: 12px; justify-content: flex-end;">
+                <a href="/admin/rundown-event" class="form-control" style="width:auto; text-decoration:none; background:rgba(255,255,255,0.05); color:#cbd5e1; border:none; padding:12px 24px; text-align:center;">Batal</a>
+                <button type="submit" class="btn-primary" style="padding: 12px 32px;" onclick="return prepareSubmit()">💾 Simpan Rundown</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let sessionCount = 0;
+
+function addSession() {
+    sessionCount++;
+    const container = document.getElementById('sessions-container');
+    const sessionId = 'session-' + sessionCount;
+    
+    const card = document.createElement('div');
+    card.className = 'session-card';
+    card.id = sessionId;
+    
+    card.innerHTML = `
+        <div class="session-header">
+            <input type="text" class="form-control session-name" placeholder="Nama Sesi (cth: Ibadah Pagi)" style="flex:1;">
+            <button type="button" class="btn-remove" onclick="document.getElementById('${sessionId}').remove()" title="Hapus Sesi">🗑️</button>
+        </div>
+        <div class="rundown-container" style="padding-left: 20px; border-left: 2px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+            <!-- Rundowns go here -->
+        </div>
+        <button type="button" class="btn-add-secondary" onclick="addRundown('${sessionId}')">➕ Tambah Item Rundown</button>
+    `;
+    
+    container.appendChild(card);
+    
+    // Add first rundown by default
+    addRundown(sessionId);
+}
+
+function addRundown(sessionId) {
+    const container = document.querySelector('#' + sessionId + ' .rundown-container');
+    const row = document.createElement('div');
+    row.className = 'rundown-row';
+    
+    row.innerHTML = `
+        <input type="time" class="form-control rundown-time" style="width: 120px;" title="Jam">
+        <input type="text" class="form-control rundown-role" placeholder="Role / Acara" style="flex: 1;">
+        <input type="text" class="form-control rundown-person" placeholder="Nama (Opsional)" style="flex: 2;">
+        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">❌</button>
+    `;
+    
+    container.appendChild(row);
+}
+
+function prepareSubmit() {
+    const isPub = document.getElementById("is_published").checked;
+    if(isPub) {
+        if(!confirm("Anda memilih untuk langsung mempublish. Data ini akan langsung terlihat di aplikasi Mobile. Lanjutkan?")) {
+            return false;
+        }
+    }
+
+    const sessions = [];
+    document.querySelectorAll('.session-card').forEach(card => {
+        const sessionName = card.querySelector('.session-name').value.trim();
+        const rundowns = [];
+        
+        card.querySelectorAll('.rundown-row').forEach(row => {
+            const time = row.querySelector('.rundown-time').value.trim();
+            const role = row.querySelector('.rundown-role').value.trim();
+            const person = row.querySelector('.rundown-person').value.trim();
+            
+            if (time || role || person) {
+                rundowns.push({ time, role, person });
+            }
+        });
+        
+        sessions.push({
+            session_name: sessionName,
+            rundowns: rundowns
+        });
+    });
+    
+    document.getElementById('sessions_json').value = JSON.stringify(sessions);
+    return true;
+}
+
+// Initialize with one session
+window.onload = function() {
+    addSession();
+};
+</script>
+{% endblock %}

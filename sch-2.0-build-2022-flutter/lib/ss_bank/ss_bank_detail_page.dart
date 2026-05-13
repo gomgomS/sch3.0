@@ -93,9 +93,12 @@ class _SsBankDetailPageState extends State<SsBankDetailPage> {
                       unselectedLabelColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
                       tabs: materiList.map((m) {
                         return Tab(
-                          child: Text(
-                            m.dayOfWeek,
-                            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              m.dayOfWeek,
+                              style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         );
                       }).toList(),
@@ -180,28 +183,27 @@ class _SsBankDetailPageState extends State<SsBankDetailPage> {
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          if (widget.pelajaran.pptUrl.isNotEmpty)
-            ElevatedButton.icon(
-              onPressed: () async {
-                final uri = Uri.parse(widget.pelajaran.pptUrl);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not open PPT link.')),
-                  );
-                }
-              },
-              icon: const Icon(Icons.slideshow),
-              label: const Text("View PPT Material"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFa855f7),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
+          // if (widget.pelajaran.pptUrl.isNotEmpty)
+          //   ElevatedButton.icon(
+          //     onPressed: () async {
+          //       final uri = Uri.parse(widget.pelajaran.pptUrl);
+          //       if (await canLaunchUrl(uri)) {
+          //         await launchUrl(uri, mode: LaunchMode.externalApplication);
+          //       } else {
+          //         ScaffoldMessenger.of(context).showSnackBar(
+          //           const SnackBar(content: Text('Could not open PPT link.')),
+          //         );
+          //       }
+          //     },
+          //     icon: const Icon(Icons.slideshow),
+          //     label: const Text("View PPT Material"),
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: const Color(0xFFa855f7),
+          //       foregroundColor: Colors.white,
+          //       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          //     ),
+          //   ),
           const SizedBox(height: 60),
         ],
       ),

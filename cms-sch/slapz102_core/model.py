@@ -120,5 +120,13 @@ db = {
         "ppt_url"         : "",
         "status"          : "ACTIVE",
     },
+    # Rundown Event
+    "db_rundown_event" : {
+        "event_name"      : "",   # e.g., "Sabbath Service"
+        "event_date"      : "",   # YYYY-MM-DD
+        "sessions"        : [],   # list of {"session_name": "", "rundowns": [{"time": "09:00", "role": "MC", "person": "John"}]}
+        "is_published"    : False,
+        "status"          : "ACTIVE",
+    },
 
 }

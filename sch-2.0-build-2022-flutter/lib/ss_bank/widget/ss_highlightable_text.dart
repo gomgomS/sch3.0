@@ -27,7 +27,7 @@ class SsHighlightableText extends StatefulWidget {
 }
 
 class _SsHighlightableTextState extends State<SsHighlightableText> {
-  static final FlutterTts _flutterTts = FlutterTts();
+  static FlutterTts? _flutterTts;
 
   void _showAddNoteDialog(int start, int end, String selectedText) {
     final noteController = TextEditingController();
@@ -223,8 +223,9 @@ class _SsHighlightableTextState extends State<SsHighlightableText> {
     final myNotes = notesProvider.getNotesForBlock(widget.pelajaranId, widget.dayOfWeek, widget.blockIndex);
 
     return SelectableText.rich(
-      key: ValueKey('selectable_${widget.pelajaranId}_${widget.dayOfWeek}_${widget.blockIndex}_${myNotes.length}'),
-      TextSpan(children: _buildSpans(myNotes)),
+      key: ValueKey('selectable_${widget.pelajaranId}_${widget.dayOfWeek}_${widget.blockIndex}_${myNotes.length}_${widget.style.fontWeight}'),
+      TextSpan(children: _buildSpans(myNotes), style: widget.style),
+      style: widget.style,
       contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
         // Filter out system injected custom buttons (like the OS "Read Aloud" or "Translate")
         // to prevent duplicate buttons.
@@ -261,9 +262,10 @@ class _SsHighlightableTextState extends State<SsHighlightableText> {
               onPressed: () async {
                 final selectedText = selection.textInside(editableTextState.textEditingValue.text);
                 ContextMenuController.removeAny();
-                await _flutterTts.setLanguage("id-ID");
-                await _flutterTts.setSpeechRate(0.5); // Normal speed
-                await _flutterTts.speak(selectedText);
+                _flutterTts ??= FlutterTts();
+                await _flutterTts!.setLanguage("id-ID");
+                await _flutterTts!.setSpeechRate(0.5); // Normal speed
+                await _flutterTts!.speak(selectedText);
               },
             ),
           );

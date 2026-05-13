@@ -71,6 +71,7 @@ class SchLyrics extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
                             fontSize: 20.0,
+                            fontWeight: settings.isBoldText ? FontWeight.bold : FontWeight.normal,
                             height: 1.8,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),

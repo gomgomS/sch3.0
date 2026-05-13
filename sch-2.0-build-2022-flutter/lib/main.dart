@@ -78,6 +78,18 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
           iconTheme: IconThemeData(color: Color(0xFF013220)),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          indicatorColor: const Color(0xFF013220), // Emerald
+          iconTheme: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return const IconThemeData(color: Colors.white);
+            }
+            return const IconThemeData(color: Color(0xFF013220));
+          }),
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(color: Color(0xFF091F14)),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -104,6 +116,18 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           centerTitle: true,
           iconTheme: IconThemeData(color: Color(0xFFD4AF37)),
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          indicatorColor: const Color(0xFFD4AF37), // Gold
+          iconTheme: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return const IconThemeData(color: Colors.black);
+            }
+            return const IconThemeData(color: Color(0xFFE6EBE8));
+          }),
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(color: Color(0xFFE6EBE8)),
+          ),
         ),
       ),
       home: const HomePage(),

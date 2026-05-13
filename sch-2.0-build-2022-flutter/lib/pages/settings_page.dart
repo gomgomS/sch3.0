@@ -61,6 +61,11 @@ class SettingsPage extends StatelessWidget {
                           label: Text("Dark"),
                         ),
                       ],
+                      style: SegmentedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.onSurface,
+                        selectedForegroundColor: Theme.of(context).colorScheme.onPrimary,
+                        selectedBackgroundColor: Theme.of(context).colorScheme.primary,
+                      ),
                       selected: {settings.themeMode},
                       onSelectionChanged: (Set<ThemeMode> newSelection) {
                         settings.setThemeMode(newSelection.first);

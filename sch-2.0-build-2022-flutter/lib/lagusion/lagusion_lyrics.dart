@@ -45,7 +45,7 @@ class LagusionLyrics extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 22.0,
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const Padding(
